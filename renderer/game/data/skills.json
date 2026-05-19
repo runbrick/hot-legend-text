@@ -1,0 +1,37 @@
+{
+  "战士": [
+    { "name": "基础剑术", "learnLevel": 1, "maxLevel": 3, "description": "战士基础技能，提高近战命中率", "effect": { "type": "accuracy", "perLevel": 5 } },
+    { "name": "攻杀剑术", "learnLevel": 9, "maxLevel": 3, "description": "凝聚力量释放强力一击，造成额外伤害", "effect": { "type": "attackPercent", "perLevel": 10 } },
+    { "name": "刺杀剑术", "learnLevel": 15, "maxLevel": 3, "description": "精准的刺击，无视部分防御", "effect": { "type": "ignoreDefense", "perLevel": 5 } },
+    { "name": "半月弯刀", "learnLevel": 21, "maxLevel": 3, "description": "横扫前方半月形的攻击范围", "effect": { "type": "attackPercent", "perLevel": 15 } },
+    { "name": "野蛮冲撞", "learnLevel": 27, "maxLevel": 3, "description": "用身体撞击敌人，有一定几率眩晕", "effect": { "type": "stun", "perLevel": 3 } },
+    { "name": "烈火剑法", "learnLevel": 33, "maxLevel": 3, "description": "战士最强剑法，释放烈焰之力造成巨大伤害", "effect": { "type": "attackPercent", "perLevel": 25 } },
+    { "name": "狮子吼", "learnLevel": 38, "maxLevel": 3, "description": "发出震天咆哮，威慑周围敌人降低其攻击力", "effect": { "type": "enemyDebuff", "perLevel": 5 } }
+  ],
+  "法师": [
+    { "name": "火球术", "learnLevel": 1, "maxLevel": 3, "description": "发射火球攻击敌人", "effect": { "type": "magicPercent", "perLevel": 5 } },
+    { "name": "抗拒火环", "learnLevel": 7, "maxLevel": 3, "description": "释放火焰光环推开周围敌人", "effect": { "type": "defense", "perLevel": 3 } },
+    { "name": "诱惑之光", "learnLevel": 12, "maxLevel": 3, "description": "迷惑敌人使其攻击降低", "effect": { "type": "enemyDebuff", "perLevel": 4 } },
+    { "name": "地狱火", "learnLevel": 16, "maxLevel": 3, "description": "施放地狱之火灼烧敌人", "effect": { "type": "magicPercent", "perLevel": 10 } },
+    { "name": "雷电术", "learnLevel": 20, "maxLevel": 3, "description": "召唤雷电攻击敌人，法师核心技能", "effect": { "type": "magicPercent", "perLevel": 15 } },
+    { "name": "爆裂火焰", "learnLevel": 22, "maxLevel": 3, "description": "释放范围火焰爆炸", "effect": { "type": "magicPercent", "perLevel": 12 } },
+    { "name": "火墙", "learnLevel": 24, "maxLevel": 3, "description": "在地面布置火墙持续灼烧敌人", "effect": { "type": "dot", "perLevel": 8 } },
+    { "name": "疾光电影", "learnLevel": 26, "maxLevel": 3, "description": "释放闪电链攻击敌人", "effect": { "type": "magicPercent", "perLevel": 18 } },
+    { "name": "魔法盾", "learnLevel": 30, "maxLevel": 3, "description": "以魔力制造护盾吸收伤害", "effect": { "type": "defense", "perLevel": 8 } },
+    { "name": "地狱雷光", "learnLevel": 32, "maxLevel": 3, "description": "释放强大的雷光攻击", "effect": { "type": "magicPercent", "perLevel": 22 } },
+    { "name": "冰咆哮", "learnLevel": 35, "maxLevel": 3, "description": "法师最强魔法，召唤暴风雪冻结并伤害敌人", "effect": { "type": "magicPercent", "perLevel": 30 } }
+  ],
+  "道士": [
+    { "name": "治愈术", "learnLevel": 1, "maxLevel": 3, "description": "恢复自身生命值", "effect": { "type": "heal", "perLevel": 8 } },
+    { "name": "精神力战法", "learnLevel": 7, "maxLevel": 3, "description": "运用精神力增强攻防", "effect": { "type": "attackPercent", "perLevel": 5 } },
+    { "name": "施毒术", "learnLevel": 12, "maxLevel": 3, "description": "对敌人施放剧毒造成持续伤害", "effect": { "type": "dot", "perLevel": 6 } },
+    { "name": "灵魂火符", "learnLevel": 16, "maxLevel": 3, "description": "释放灵魂火符攻击敌人", "effect": { "type": "magicPercent", "perLevel": 12 } },
+    { "name": "召唤骷髅", "learnLevel": 19, "maxLevel": 3, "description": "召唤骷髅战士协助战斗", "effect": { "type": "pet", "perLevel": 10 } },
+    { "name": "隐身术", "learnLevel": 22, "maxLevel": 3, "description": "进入隐身状态降低被攻击几率", "effect": { "type": "dodge", "perLevel": 5 } },
+    { "name": "幽灵盾", "learnLevel": 24, "maxLevel": 3, "description": "召唤幽灵之盾提高魔法防御", "effect": { "type": "magicDefense", "perLevel": 6 } },
+    { "name": "神圣战甲术", "learnLevel": 26, "maxLevel": 3, "description": "神圣之力加持提高物理防御", "effect": { "type": "defense", "perLevel": 6 } },
+    { "name": "困魔咒", "learnLevel": 30, "maxLevel": 3, "description": "限制怪物行动", "effect": { "type": "enemyDebuff", "perLevel": 5 } },
+    { "name": "群体治愈术", "learnLevel": 33, "maxLevel": 3, "description": "释放群体治疗恢复生命", "effect": { "type": "heal", "perLevel": 12 } },
+    { "name": "召唤神兽", "learnLevel": 38, "maxLevel": 3, "description": "道士最强技能，召唤神兽协助战斗", "effect": { "type": "pet", "perLevel": 25 } }
+  ]
+}

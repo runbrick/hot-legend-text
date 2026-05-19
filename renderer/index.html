@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>热血传奇放置</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Character Selection Screen -->
+  <div id="char-select-screen" class="screen active">
+    <div class="select-container">
+      <div class="title">热血传奇放置</div>
+      <div class="subtitle">全文字放置游戏</div>
+      <div id="char-list" class="char-list"></div>
+      <div id="create-char-panel" class="create-panel"></div>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="game-screen" class="screen">
+    <!-- Title Bar -->
+    <div class="title-bar">
+      <span class="title-text">热血传奇放置</span>
+      <span id="game-status" class="game-status">● 挂机中</span>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+      <!-- Left Panel: Character Info + Equipment -->
+      <div class="left-panel">
+        <!-- Character Summary -->
+        <div class="panel char-panel">
+          <div class="panel-title">角色信息</div>
+          <div id="char-summary" class="char-summary"></div>
+          <div class="bars">
+            <div class="bar-row"><span class="bar-label">HP</span><div class="bar-bg"><div id="hp-bar" class="bar-fill hp-fill"></div></div><span id="hp-text" class="bar-text"></span></div>
+            <div class="bar-row"><span class="bar-label">MP</span><div class="bar-bg"><div id="mp-bar" class="bar-fill mp-fill"></div></div><span id="mp-text" class="bar-text"></span></div>
+            <div class="bar-row"><span class="bar-label">EXP</span><div class="bar-bg"><div id="exp-bar" class="bar-fill exp-fill"></div></div><span id="exp-text" class="bar-text"></span></div>
+          </div>
+        </div>
+
+        <!-- Stats Panel -->
+        <div class="panel stats-panel">
+          <div class="panel-title">属性 <span id="pending-points" class="highlight"></span></div>
+          <div id="stats-display" class="stats-display"></div>
+          <div id="allocate-buttons" class="allocate-buttons"></div>
+        </div>
+
+        <!-- Equipment Panel -->
+        <div class="panel equip-panel">
+          <div class="panel-title">装备</div>
+          <div id="equipment-display" class="equipment-display"></div>
+        </div>
+      </div>
+
+      <!-- Center Panel: Combat Log -->
+      <div class="center-panel">
+        <div class="panel-title">战斗日志</div>
+        <div id="combat-log" class="combat-log"></div>
+      </div>
+
+      <!-- Right Panel: Navigation + NPC + Skills + Inventory -->
+      <div class="right-panel">
+        <!-- Current Location & Navigation -->
+        <div class="panel nav-panel">
+          <div class="panel-title">位置</div>
+          <div id="current-location" class="current-location"></div>
+          <div id="nav-actions" class="nav-actions"></div>
+        </div>
+
+        <!-- NPC Shop (only shown in city) -->
+        <div id="shop-panel" class="panel shop-panel" style="display:none;">
+          <div class="panel-title">商店</div>
+          <div id="shop-content" class="shop-content"></div>
+        </div>
+
+        <!-- Skills -->
+        <div class="panel skills-panel">
+          <div class="panel-title">技能</div>
+          <div id="skills-display" class="skills-display"></div>
+        </div>
+
+        <!-- Inventory -->
+        <div class="panel inventory-panel">
+          <div class="panel-title">背包 <span id="inv-count" class="count"></span></div>
+          <div id="inventory-display" class="inventory-display"></div>
+          <div class="inv-actions">
+            <button id="btn-equip-selected" class="btn btn-small">装备</button>
+            <button id="btn-sell-selected" class="btn btn-small">出售</button>
+            <button id="btn-discard-selected" class="btn btn-small">丢弃</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="bottom-bar">
+      <button id="btn-start-stop" class="btn">暂停挂机</button>
+      <button id="btn-save" class="btn">手动保存</button>
+      <button id="btn-exit" class="btn">返回角色选择</button>
+      <span class="gold-display">金币: <span id="gold-text">0</span></span>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast"></div>
+
+  <script src="game/character.js"></script>
+  <script src="game/inventory.js"></script>
+  <script src="game/engine.js"></script>
+  <script>
+    // Load game data via IPC before starting app
+    (async function() {
+      try {
+        const data = await window.electronAPI.getGameData();
+        window.gameData = data;
+      } catch(e) {
+        console.error('Failed to load game data:', e);
+        window.gameData = {};
+      }
+      // Now load the main app
+      const script = document.createElement('script');
+      script.src = 'app.js';
+      document.body.appendChild(script);
+    })();
+  </script>
+</body>
+</html>

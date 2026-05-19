@@ -1,0 +1,113 @@
+{
+  "战士": {
+    "id": "warrior",
+    "name": "战士",
+    "description": "以强大的体力和近身格斗著称，生命值高，物理攻击力强",
+    "baseHp": 120,
+    "baseMp": 30,
+    "baseStats": {
+      "attack": 12,
+      "defense": 8,
+      "magicAttack": 1,
+      "magicDefense": 2
+    },
+    "statGrowth": {
+      "attack": 3,
+      "defense": 2,
+      "magicAttack": 0,
+      "magicDefense": 1
+    },
+    "hpPerLevel": 22,
+    "mpPerLevel": 5,
+    "statPointsPerLevel": 5,
+    "weaponTypes": ["sword", "axe"],
+    "startingEquipment": {
+      "weapon": "木剑",
+      "armor": "布衣(男)",
+      "helmet": null,
+      "necklace": null,
+      "bracelet1": null,
+      "bracelet2": null,
+      "ring1": null,
+      "ring2": null
+    },
+    "startingItems": [
+      { "name": "金创药(小)", "quantity": 10 },
+      { "name": "魔法药(小)", "quantity": 3 }
+    ]
+  },
+  "法师": {
+    "id": "wizard",
+    "name": "法师",
+    "description": "掌握强大的元素魔法，远程攻击力极高，但生命值较低",
+    "baseHp": 60,
+    "baseMp": 90,
+    "baseStats": {
+      "attack": 3,
+      "defense": 3,
+      "magicAttack": 12,
+      "magicDefense": 5
+    },
+    "statGrowth": {
+      "attack": 1,
+      "defense": 1,
+      "magicAttack": 3,
+      "magicDefense": 2
+    },
+    "hpPerLevel": 12,
+    "mpPerLevel": 18,
+    "statPointsPerLevel": 5,
+    "weaponTypes": ["wand", "staff"],
+    "startingEquipment": {
+      "weapon": "木剑",
+      "armor": "布衣(男)",
+      "helmet": null,
+      "necklace": null,
+      "bracelet1": null,
+      "bracelet2": null,
+      "ring1": null,
+      "ring2": null
+    },
+    "startingItems": [
+      { "name": "金创药(小)", "quantity": 5 },
+      { "name": "魔法药(小)", "quantity": 10 }
+    ]
+  },
+  "道士": {
+    "id": "taoist",
+    "name": "道士",
+    "description": "通晓精神力和治愈之术，能召唤宠物辅助战斗，能力均衡",
+    "baseHp": 80,
+    "baseMp": 60,
+    "baseStats": {
+      "attack": 7,
+      "defense": 5,
+      "magicAttack": 7,
+      "magicDefense": 5
+    },
+    "statGrowth": {
+      "attack": 2,
+      "defense": 1,
+      "magicAttack": 2,
+      "magicDefense": 2
+    },
+    "hpPerLevel": 16,
+    "mpPerLevel": 12,
+    "statPointsPerLevel": 5,
+    "weaponTypes": ["sword", "wand"],
+    "startingEquipment": {
+      "weapon": "木剑",
+      "armor": "布衣(男)",
+      "helmet": null,
+      "necklace": null,
+      "bracelet1": null,
+      "bracelet2": null,
+      "ring1": null,
+      "ring2": null
+    },
+    "startingItems": [
+      { "name": "金创药(小)", "quantity": 7 },
+      { "name": "魔法药(小)", "quantity": 7 }
+    ]
+  }
+}

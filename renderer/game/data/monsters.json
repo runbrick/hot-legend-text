@@ -1,0 +1,470 @@
+{
+  "monsters": [
+    {
+      "id": "chicken", "name": "鸡", "level": 1, "hp": 8, "attack": 2, "defense": 0,
+      "exp": 5, "gold": 5,
+      "drops": [
+        { "name": "金创药(小)", "rate": 0.05 }, { "name": "木剑", "rate": 0.01 },
+        { "name": "布衣(男)", "rate": 0.01 }, { "name": "布衣(女)", "rate": 0.01 }
+      ]
+    },
+    {
+      "id": "deer", "name": "鹿", "level": 2, "hp": 12, "attack": 3, "defense": 1,
+      "exp": 8, "gold": 8,
+      "drops": [
+        { "name": "金创药(小)", "rate": 0.08 }, { "name": "古铜戒指", "rate": 0.02 },
+        { "name": "铁手镯", "rate": 0.02 }
+      ]
+    },
+    {
+      "id": "scarecrow", "name": "稻草人", "level": 3, "hp": 18, "attack": 4, "defense": 2,
+      "exp": 12, "gold": 10,
+      "drops": [
+        { "name": "金创药(小)", "rate": 0.10 }, { "name": "金项链", "rate": 0.02 },
+        { "name": "青铜剑", "rate": 0.02 }, { "name": "古铜戒指", "rate": 0.03 }
+      ]
+    },
+    {
+      "id": "hook_cat", "name": "多钩猫", "level": 4, "hp": 22, "attack": 5, "defense": 3,
+      "exp": 16, "gold": 15,
+      "drops": [
+        { "name": "金创药(小)", "rate": 0.12 }, { "name": "铁手镯", "rate": 0.03 },
+        { "name": "六角戒指", "rate": 0.03 }, { "name": "青铜剑", "rate": 0.03 }
+      ]
+    },
+    {
+      "id": "rake_cat", "name": "钉耙猫", "level": 5, "hp": 28, "attack": 6, "defense": 3,
+      "exp": 20, "gold": 18,
+      "drops": [
+        { "name": "金创药(小)", "rate": 0.12 }, { "name": "小手镯", "rate": 0.04 },
+        { "name": "六角戒指", "rate": 0.04 }, { "name": "青铜头盔", "rate": 0.03 }
+      ]
+    },
+    {
+      "id": "skeleton", "name": "骷髅", "level": 7, "hp": 50, "attack": 8, "defense": 5,
+      "exp": 35, "gold": 30,
+      "drops": [
+        { "name": "金创药(小)", "rate": 0.15 }, { "name": "短剑", "rate": 0.05 },
+        { "name": "钢手镯", "rate": 0.04 }, { "name": "灯笼项链", "rate": 0.03 },
+        { "name": "魔法药(小)", "rate": 0.10 }
+      ]
+    },
+    {
+      "id": "axe_skeleton", "name": "掷斧骷髅", "level": 9, "hp": 65, "attack": 12, "defense": 6,
+      "exp": 45, "gold": 35,
+      "drops": [
+        { "name": "金创药(小)", "rate": 0.15 }, { "name": "海魂", "rate": 0.04 },
+        { "name": "降魔", "rate": 0.04 }, { "name": "珍珠戒指", "rate": 0.04 },
+        { "name": "青铜头盔", "rate": 0.05 }
+      ]
+    },
+    {
+      "id": "skeleton_warrior", "name": "骷髅战士", "level": 10, "hp": 80, "attack": 14, "defense": 8,
+      "exp": 55, "gold": 42,
+      "drops": [
+        { "name": "金创药(中)", "rate": 0.12 }, { "name": "铁剑", "rate": 0.05 },
+        { "name": "偃月", "rate": 0.04 }, { "name": "轻型盔甲(男)", "rate": 0.04 },
+        { "name": "轻型盔甲(女)", "rate": 0.04 }, { "name": "魔法头盔", "rate": 0.05 }
+      ]
+    },
+    {
+      "id": "skeleton_general", "name": "骷髅战将", "level": 12, "hp": 100, "attack": 18, "defense": 10,
+      "exp": 70, "gold": 55,
+      "drops": [
+        { "name": "金创药(中)", "rate": 0.15 }, { "name": "凌风", "rate": 0.04 },
+        { "name": "银蛇", "rate": 0.03 }, { "name": "魔杖", "rate": 0.03 },
+        { "name": "中型盔甲(男)", "rate": 0.04 }, { "name": "中型盔甲(女)", "rate": 0.04 },
+        { "name": "白色虎齿项链", "rate": 0.05 }
+      ]
+    },
+    {
+      "id": "cave_maggot", "name": "洞蛆", "level": 8, "hp": 55, "attack": 10, "defense": 4,
+      "exp": 40, "gold": 28,
+      "drops": [
+        { "name": "金创药(小)", "rate": 0.15 }, { "name": "魔法药(小)", "rate": 0.15 },
+        { "name": "珍珠戒指", "rate": 0.03 }, { "name": "魔法头盔", "rate": 0.03 }
+      ]
+    },
+    {
+      "id": "scorpion", "name": "蝎子", "level": 10, "hp": 70, "attack": 13, "defense": 7,
+      "exp": 50, "gold": 38,
+      "drops": [
+        { "name": "金创药(中)", "rate": 0.15 }, { "name": "钢手镯", "rate": 0.04 },
+        { "name": "道德戒指", "rate": 0.04 }, { "name": "中型盔甲(男)", "rate": 0.03 },
+        { "name": "中型盔甲(女)", "rate": 0.03 }
+      ]
+    },
+    {
+      "id": "zombie", "name": "僵尸", "level": 12, "hp": 100, "attack": 15, "defense": 8,
+      "exp": 65, "gold": 48,
+      "drops": [
+        { "name": "金创药(中)", "rate": 0.15 }, { "name": "凝霜", "rate": 0.03 },
+        { "name": "银蛇", "rate": 0.03 }, { "name": "道士头盔", "rate": 0.04 },
+        { "name": "魔法药(中)", "rate": 0.12 }
+      ]
+    },
+    {
+      "id": "rotten_zombie", "name": "腐尸", "level": 14, "hp": 130, "attack": 18, "defense": 10,
+      "exp": 85, "gold": 60,
+      "drops": [
+        { "name": "金创药(中)", "rate": 0.18 }, { "name": "凝霜", "rate": 0.04 },
+        { "name": "魔杖", "rate": 0.04 }, { "name": "死神手套", "rate": 0.04 },
+        { "name": "蓝翡翠项链", "rate": 0.04 }
+      ]
+    },
+    {
+      "id": "crawling_zombie", "name": "爬行僵尸", "level": 15, "hp": 160, "attack": 20, "defense": 12,
+      "exp": 100, "gold": 72,
+      "drops": [
+        { "name": "金创药(中)", "rate": 0.18 }, { "name": "魔法长袍(男)", "rate": 0.03 },
+        { "name": "魔法长袍(女)", "rate": 0.03 }, { "name": "灵魂战衣(男)", "rate": 0.03 },
+        { "name": "灵魂战衣(女)", "rate": 0.03 }, { "name": "重盔甲(男)", "rate": 0.03 },
+        { "name": "重盔甲(女)", "rate": 0.03 }
+      ]
+    },
+    {
+      "id": "corpse_king", "name": "尸王", "level": 18, "hp": 500, "attack": 30, "defense": 18,
+      "exp": 350, "gold": 200, "isBoss": true,
+      "drops": [
+        { "name": "修罗", "rate": 0.10 }, { "name": "魔杖", "rate": 0.10 },
+        { "name": "银蛇", "rate": 0.10 }, { "name": "骷髅头盔", "rate": 0.15 },
+        { "name": "白金戒指", "rate": 0.12 }, { "name": "阎罗手套", "rate": 0.12 },
+        { "name": "金创药(大)", "rate": 0.40 }, { "name": "魔法药(大)", "rate": 0.40 }
+      ]
+    },
+    {
+      "id": "woom_guard", "name": "沃玛卫士", "level": 17, "hp": 220, "attack": 24, "defense": 16,
+      "exp": 140, "gold": 95,
+      "drops": [
+        { "name": "金创药(中)", "rate": 0.20 }, { "name": "龙之戒指", "rate": 0.04 },
+        { "name": "白金戒指", "rate": 0.05 }, { "name": "幽灵项链", "rate": 0.05 },
+        { "name": "重盔甲(男)", "rate": 0.04 }, { "name": "重盔甲(女)", "rate": 0.04 }
+      ]
+    },
+    {
+      "id": "flame_woom", "name": "火焰沃玛", "level": 19, "hp": 280, "attack": 30, "defense": 18,
+      "exp": 180, "gold": 120,
+      "drops": [
+        { "name": "魔法药(中)", "rate": 0.20 }, { "name": "金创药(中)", "rate": 0.20 },
+        { "name": "魔杖", "rate": 0.05 }, { "name": "骨玉权杖", "rate": 0.03 },
+        { "name": "魔法长袍(男)", "rate": 0.05 }, { "name": "魔法长袍(女)", "rate": 0.05 }
+      ]
+    },
+    {
+      "id": "woom_warrior", "name": "沃玛勇士", "level": 20, "hp": 320, "attack": 32, "defense": 20,
+      "exp": 210, "gold": 140,
+      "drops": [
+        { "name": "金创药(中)", "rate": 0.20 }, { "name": "井中月", "rate": 0.04 },
+        { "name": "龙之戒指", "rate": 0.05 }, { "name": "死神手套", "rate": 0.06 },
+        { "name": "重盔甲(男)", "rate": 0.06 }, { "name": "重盔甲(女)", "rate": 0.06 }
+      ]
+    },
+    {
+      "id": "woom_lord", "name": "沃玛教主", "level": 22, "hp": 800, "attack": 40, "defense": 25,
+      "exp": 600, "gold": 400, "isBoss": true,
+      "drops": [
+        { "name": "井中月", "rate": 0.08 }, { "name": "骨玉权杖", "rate": 0.08 },
+        { "name": "龙纹剑", "rate": 0.08 }, { "name": "记忆项链", "rate": 0.10 },
+        { "name": "龙之戒指", "rate": 0.10 }, { "name": "阎罗手套", "rate": 0.10 },
+        { "name": "金创药(大)", "rate": 0.50 }, { "name": "太阳水", "rate": 0.30 }
+      ]
+    },
+    {
+      "id": "centipede", "name": "蜈蚣", "level": 22, "hp": 350, "attack": 34, "defense": 22,
+      "exp": 240, "gold": 160,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.15 }, { "name": "魔法药(大)", "rate": 0.15 },
+        { "name": "修罗", "rate": 0.04 }, { "name": "蓝翡翠项链", "rate": 0.05 }
+      ]
+    },
+    {
+      "id": "pincer_bug", "name": "钳虫", "level": 24, "hp": 420, "attack": 38, "defense": 26,
+      "exp": 300, "gold": 190,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.18 }, { "name": "凌风", "rate": 0.05 },
+        { "name": "战神盔甲(男)", "rate": 0.03 }, { "name": "战神盔甲(女)", "rate": 0.03 },
+        { "name": "骷髅头盔", "rate": 0.05 }
+      ]
+    },
+    {
+      "id": "black_maggot", "name": "黑色恶蛆", "level": 26, "hp": 480, "attack": 42, "defense": 28,
+      "exp": 360, "gold": 220,
+      "drops": [
+        { "name": "魔法药(大)", "rate": 0.20 }, { "name": "金创药(大)", "rate": 0.18 },
+        { "name": "恶魔长袍(男)", "rate": 0.03 }, { "name": "恶魔长袍(女)", "rate": 0.03 },
+        { "name": "血饮", "rate": 0.03 }
+      ]
+    },
+    {
+      "id": "giant_worm", "name": "巨型蠕虫", "level": 25, "hp": 450, "attack": 40, "defense": 25,
+      "exp": 330, "gold": 200,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.18 }, { "name": "魔法药(大)", "rate": 0.18 },
+        { "name": "记忆项链", "rate": 0.04 }, { "name": "骑士手镯", "rate": 0.03 }
+      ]
+    },
+    {
+      "id": "jumping_bee", "name": "跳跳蜂", "level": 27, "hp": 500, "attack": 44, "defense": 30,
+      "exp": 400, "gold": 250,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.20 }, { "name": "幽灵战衣(男)", "rate": 0.03 },
+        { "name": "幽灵战衣(女)", "rate": 0.03 }, { "name": "龙之手镯", "rate": 0.03 }
+      ]
+    },
+    {
+      "id": "maggot_king", "name": "恶蛆王", "level": 30, "hp": 900, "attack": 55, "defense": 35,
+      "exp": 750, "gold": 500, "isBoss": true,
+      "drops": [
+        { "name": "裁决之杖", "rate": 0.06 }, { "name": "骨玉权杖", "rate": 0.06 },
+        { "name": "龙纹剑", "rate": 0.06 }, { "name": "黑铁头盔", "rate": 0.10 },
+        { "name": "绿色项链", "rate": 0.10 }, { "name": "力量戒指", "rate": 0.10 },
+        { "name": "金创药(大)", "rate": 0.60 }, { "name": "太阳水", "rate": 0.40 }
+      ]
+    },
+    {
+      "id": "red_boar", "name": "红野猪", "level": 28, "hp": 550, "attack": 46, "defense": 32,
+      "exp": 440, "gold": 280,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.22 }, { "name": "魔法药(大)", "rate": 0.22 },
+        { "name": "炼狱", "rate": 0.03 }, { "name": "战神盔甲(男)", "rate": 0.04 },
+        { "name": "战神盔甲(女)", "rate": 0.04 }, { "name": "黑铁头盔", "rate": 0.03 }
+      ]
+    },
+    {
+      "id": "black_boar", "name": "黑野猪", "level": 30, "hp": 620, "attack": 50, "defense": 35,
+      "exp": 510, "gold": 320,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.25 }, { "name": "魔法药(大)", "rate": 0.25 },
+        { "name": "恶魔长袍(男)", "rate": 0.04 }, { "name": "恶魔长袍(女)", "rate": 0.04 },
+        { "name": "幽灵战衣(男)", "rate": 0.04 }, { "name": "幽灵战衣(女)", "rate": 0.04 }
+      ]
+    },
+    {
+      "id": "wedge_moth", "name": "楔蛾", "level": 29, "hp": 580, "attack": 48, "defense": 30,
+      "exp": 470, "gold": 300,
+      "drops": [
+        { "name": "魔法药(大)", "rate": 0.25 }, { "name": "紫碧螺", "rate": 0.03 },
+        { "name": "泰坦戒指", "rate": 0.03 }, { "name": "心灵手镯", "rate": 0.03 }
+      ]
+    },
+    {
+      "id": "horn_fly", "name": "角蝇", "level": 30, "hp": 600, "attack": 48, "defense": 28,
+      "exp": 490, "gold": 310,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.25 }, { "name": "魔法药(大)", "rate": 0.25 },
+        { "name": "记忆项链", "rate": 0.05 }, { "name": "龙之手镯", "rate": 0.04 }
+      ]
+    },
+    {
+      "id": "white_boar", "name": "白野猪", "level": 35, "hp": 1200, "attack": 65, "defense": 40,
+      "exp": 1200, "gold": 800, "isBoss": true,
+      "drops": [
+        { "name": "裁决之杖", "rate": 0.08 }, { "name": "骨玉权杖", "rate": 0.08 },
+        { "name": "龙纹剑", "rate": 0.08 }, { "name": "圣战头盔", "rate": 0.06 },
+        { "name": "法神头盔", "rate": 0.06 }, { "name": "天尊头盔", "rate": 0.06 },
+        { "name": "绿色项链", "rate": 0.08 }, { "name": "力量戒指", "rate": 0.08 },
+        { "name": "紫碧螺", "rate": 0.08 }, { "name": "泰坦戒指", "rate": 0.08 },
+        { "name": "太阳水", "rate": 0.50 }
+      ]
+    },
+    {
+      "id": "evil_snake", "name": "邪恶毒蛇", "level": 36, "hp": 1300, "attack": 68, "defense": 42,
+      "exp": 1300, "gold": 850, "isBoss": true,
+      "drops": [
+        { "name": "裁决之杖", "rate": 0.08 }, { "name": "骨玉权杖", "rate": 0.08 },
+        { "name": "龙纹剑", "rate": 0.08 }, { "name": "屠龙", "rate": 0.02 },
+        { "name": "嗜魂法杖", "rate": 0.02 }, { "name": "逍遥扇", "rate": 0.02 },
+        { "name": "黑铁头盔", "rate": 0.10 }, { "name": "骑士手镯", "rate": 0.08 },
+        { "name": "太阳水", "rate": 0.60 }
+      ]
+    },
+    {
+      "id": "zuma_guard", "name": "祖玛卫士", "level": 33, "hp": 700, "attack": 55, "defense": 38,
+      "exp": 580, "gold": 380,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.25 }, { "name": "魔法药(大)", "rate": 0.25 },
+        { "name": "炼狱", "rate": 0.04 }, { "name": "绿色项链", "rate": 0.04 },
+        { "name": "骑士手镯", "rate": 0.03 }
+      ]
+    },
+    {
+      "id": "zuma_statue", "name": "祖玛雕像", "level": 34, "hp": 780, "attack": 58, "defense": 40,
+      "exp": 660, "gold": 420,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.25 }, { "name": "魔法药(大)", "rate": 0.25 },
+        { "name": "血饮", "rate": 0.04 }, { "name": "紫碧螺", "rate": 0.04 },
+        { "name": "龙之手镯", "rate": 0.04 }
+      ]
+    },
+    {
+      "id": "zuma_archer", "name": "祖玛弓箭手", "level": 35, "hp": 850, "attack": 62, "defense": 42,
+      "exp": 740, "gold": 470,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.25 }, { "name": "魔法药(大)", "rate": 0.25 },
+        { "name": "无极棍", "rate": 0.04 }, { "name": "泰坦戒指", "rate": 0.04 },
+        { "name": "心灵手镯", "rate": 0.04 }
+      ]
+    },
+    {
+      "id": "zuma_lord", "name": "祖玛教主", "level": 40, "hp": 2500, "attack": 80, "defense": 55,
+      "exp": 3000, "gold": 2000, "isBoss": true,
+      "drops": [
+        { "name": "屠龙", "rate": 0.04 }, { "name": "嗜魂法杖", "rate": 0.04 },
+        { "name": "逍遥扇", "rate": 0.04 }, { "name": "天魔神甲", "rate": 0.06 },
+        { "name": "法神披风", "rate": 0.06 }, { "name": "天尊道袍", "rate": 0.06 },
+        { "name": "圣战头盔", "rate": 0.08 }, { "name": "法神头盔", "rate": 0.08 },
+        { "name": "天尊头盔", "rate": 0.08 }, { "name": "圣战项链", "rate": 0.10 },
+        { "name": "法神项链", "rate": 0.10 }, { "name": "天尊项链", "rate": 0.10 },
+        { "name": "圣战手镯", "rate": 0.10 }, { "name": "法神手镯", "rate": 0.10 },
+        { "name": "天尊手镯", "rate": 0.10 }, { "name": "圣战戒指", "rate": 0.10 },
+        { "name": "法神戒指", "rate": 0.10 }, { "name": "天尊戒指", "rate": 0.10 },
+        { "name": "太阳水", "rate": 0.80 }
+      ]
+    },
+    {
+      "id": "dark_warrior", "name": "暗黑战士", "level": 40, "hp": 1500, "attack": 72, "defense": 48,
+      "exp": 1000, "gold": 600,
+      "drops": [
+        { "name": "井中月", "rate": 0.06 }, { "name": "骨玉权杖", "rate": 0.06 },
+        { "name": "龙纹剑", "rate": 0.06 }, { "name": "黑铁头盔", "rate": 0.08 },
+        { "name": "绿色项链", "rate": 0.06 }, { "name": "太阳水", "rate": 0.30 }
+      ]
+    },
+    {
+      "id": "bone_hammer_soldier", "name": "骷髅锤兵", "level": 38, "hp": 1000, "attack": 62, "defense": 44,
+      "exp": 850, "gold": 520,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.30 }, { "name": "魔法药(大)", "rate": 0.30 },
+        { "name": "裁决之杖", "rate": 0.03 }, { "name": "黑铁头盔", "rate": 0.05 },
+        { "name": "力量戒指", "rate": 0.05 }
+      ]
+    },
+    {
+      "id": "bone_spear_soldier", "name": "骷髅长枪兵", "level": 39, "hp": 1050, "attack": 65, "defense": 46,
+      "exp": 920, "gold": 560,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.30 }, { "name": "魔法药(大)", "rate": 0.30 },
+        { "name": "骨玉权杖", "rate": 0.03 }, { "name": "紫碧螺", "rate": 0.05 },
+        { "name": "龙之手镯", "rate": 0.05 }
+      ]
+    },
+    {
+      "id": "bone_axe_soldier", "name": "骷髅刀斧手", "level": 40, "hp": 1100, "attack": 68, "defense": 48,
+      "exp": 1000, "gold": 600,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.30 }, { "name": "魔法药(大)", "rate": 0.30 },
+        { "name": "龙纹剑", "rate": 0.03 }, { "name": "泰坦戒指", "rate": 0.05 },
+        { "name": "心灵手镯", "rate": 0.05 }
+      ]
+    },
+    {
+      "id": "huangquan_lord", "name": "黄泉教主", "level": 43, "hp": 3200, "attack": 85, "defense": 60,
+      "exp": 4000, "gold": 2800, "isBoss": true,
+      "drops": [
+        { "name": "屠龙", "rate": 0.05 }, { "name": "嗜魂法杖", "rate": 0.05 },
+        { "name": "逍遥扇", "rate": 0.05 }, { "name": "天魔神甲", "rate": 0.08 },
+        { "name": "法神披风", "rate": 0.08 }, { "name": "天尊道袍", "rate": 0.08 },
+        { "name": "圣战套装", "rate": 0.12 }, { "name": "法神套装", "rate": 0.12 },
+        { "name": "天尊套装", "rate": 0.12 }, { "name": "太阳水", "rate": 0.80 }
+      ]
+    },
+    {
+      "id": "bull_fighter", "name": "牛魔斗士", "level": 43, "hp": 1300, "attack": 75, "defense": 52,
+      "exp": 1200, "gold": 700,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.35 }, { "name": "魔法药(大)", "rate": 0.35 },
+        { "name": "裁决之杖", "rate": 0.04 }, { "name": "圣战项链", "rate": 0.04 },
+        { "name": "圣战戒指", "rate": 0.04 }
+      ]
+    },
+    {
+      "id": "bull_mage", "name": "牛魔法师", "level": 44, "hp": 1350, "attack": 80, "defense": 54,
+      "exp": 1350, "gold": 780,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.35 }, { "name": "魔法药(大)", "rate": 0.35 },
+        { "name": "骨玉权杖", "rate": 0.04 }, { "name": "法神项链", "rate": 0.04 },
+        { "name": "法神戒指", "rate": 0.04 }
+      ]
+    },
+    {
+      "id": "bull_guard", "name": "牛魔侍卫", "level": 45, "hp": 1400, "attack": 82, "defense": 56,
+      "exp": 1500, "gold": 850,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.35 }, { "name": "魔法药(大)", "rate": 0.35 },
+        { "name": "龙纹剑", "rate": 0.04 }, { "name": "天尊项链", "rate": 0.04 },
+        { "name": "天尊戒指", "rate": 0.04 }
+      ]
+    },
+    {
+      "id": "bull_general", "name": "牛魔将军", "level": 46, "hp": 1600, "attack": 88, "defense": 58,
+      "exp": 1800, "gold": 1000,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.40 }, { "name": "魔法药(大)", "rate": 0.40 },
+        { "name": "圣战手镯", "rate": 0.05 }, { "name": "法神手镯", "rate": 0.05 },
+        { "name": "天尊手镯", "rate": 0.05 }, { "name": "太阳水", "rate": 0.30 }
+      ]
+    },
+    {
+      "id": "bull_king", "name": "牛魔王", "level": 48, "hp": 5000, "attack": 100, "defense": 70,
+      "exp": 6000, "gold": 4000, "isBoss": true,
+      "drops": [
+        { "name": "屠龙", "rate": 0.06 }, { "name": "嗜魂法杖", "rate": 0.06 },
+        { "name": "逍遥扇", "rate": 0.06 }, { "name": "天魔神甲", "rate": 0.10 },
+        { "name": "法神披风", "rate": 0.10 }, { "name": "天尊道袍", "rate": 0.10 },
+        { "name": "圣战套装", "rate": 0.15 }, { "name": "法神套装", "rate": 0.15 },
+        { "name": "天尊套装", "rate": 0.15 }, { "name": "太阳水", "rate": 1.00 },
+        { "name": "回城卷", "rate": 0.50 }
+      ]
+    },
+    {
+      "id": "phantom_spider", "name": "幻影蜘蛛", "level": 46, "hp": 1800, "attack": 90, "defense": 60,
+      "exp": 2000, "gold": 1200,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.40 }, { "name": "魔法药(大)", "rate": 0.40 },
+        { "name": "裁决之杖", "rate": 0.05 }, { "name": "圣战头盔", "rate": 0.05 },
+        { "name": "圣战手镯", "rate": 0.05 }
+      ]
+    },
+    {
+      "id": "toxic_spider", "name": "剧毒蜘蛛", "level": 47, "hp": 1900, "attack": 92, "defense": 62,
+      "exp": 2200, "gold": 1300,
+      "drops": [
+        { "name": "金创药(大)", "rate": 0.40 }, { "name": "魔法药(大)", "rate": 0.40 },
+        { "name": "骨玉权杖", "rate": 0.05 }, { "name": "法神头盔", "rate": 0.05 },
+        { "name": "法神手镯", "rate": 0.05 }
+      ]
+    },
+    {
+      "id": "twin_head_vajra", "name": "双头金刚", "level": 48, "hp": 2200, "attack": 95, "defense": 65,
+      "exp": 2800, "gold": 1800, "isBoss": true,
+      "drops": [
+        { "name": "圣战头盔", "rate": 0.10 }, { "name": "圣战项链", "rate": 0.10 },
+        { "name": "圣战手镯", "rate": 0.10 }, { "name": "圣战戒指", "rate": 0.10 },
+        { "name": "天魔神甲", "rate": 0.08 }, { "name": "裁决之杖", "rate": 0.10 },
+        { "name": "太阳水", "rate": 0.60 }
+      ]
+    },
+    {
+      "id": "twin_head_bloodm", "name": "双头血魔", "level": 48, "hp": 2400, "attack": 98, "defense": 68,
+      "exp": 3000, "gold": 2000, "isBoss": true,
+      "drops": [
+        { "name": "法神头盔", "rate": 0.10 }, { "name": "法神项链", "rate": 0.10 },
+        { "name": "法神手镯", "rate": 0.10 }, { "name": "法神戒指", "rate": 0.10 },
+        { "name": "法神披风", "rate": 0.08 }, { "name": "嗜魂法杖", "rate": 0.10 },
+        { "name": "太阳水", "rate": 0.60 }
+      ]
+    },
+    {
+      "id": "red_moon_demon", "name": "赤月恶魔", "level": 50, "hp": 8000, "attack": 120, "defense": 85,
+      "exp": 10000, "gold": 8000, "isBoss": true,
+      "drops": [
+        { "name": "屠龙", "rate": 0.10 }, { "name": "嗜魂法杖", "rate": 0.10 },
+        { "name": "逍遥扇", "rate": 0.10 }, { "name": "天魔神甲", "rate": 0.12 },
+        { "name": "法神披风", "rate": 0.12 }, { "name": "天尊道袍", "rate": 0.12 },
+        { "name": "圣战套装", "rate": 0.20 }, { "name": "法神套装", "rate": 0.20 },
+        { "name": "天尊套装", "rate": 0.20 }, { "name": "太阳水", "rate": 1.00 },
+        { "name": "回城卷", "rate": 0.80 }
+      ]
+    }
+  ]
+}

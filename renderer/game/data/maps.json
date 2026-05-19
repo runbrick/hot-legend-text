@@ -1,0 +1,196 @@
+{
+  "cities": [
+    {
+      "id": "bichon_city",
+      "name": "比奇城",
+      "region": "比奇省",
+      "minLevel": 1,
+      "description": "玛法大陆最大的城市，新手冒险者的起点。城中有药店、武器店、衣服店和首饰店。",
+      "npc": {
+        "药店": {
+          "name": "药店老板",
+          "greeting": "欢迎光临！我这里出售各种药水。",
+          "sells": ["金创药(小)", "金创药(中)", "魔法药(小)", "魔法药(中)", "太阳水", "回城卷"]
+        },
+        "装备店": {
+          "name": "武器店老板",
+          "greeting": "好装备能救你一命！看看有什么需要的。",
+          "sells": ["木剑", "青铜剑", "短剑", "铁剑", "海魂", "降魔", "布衣(男)", "布衣(女)", "轻型盔甲(男)", "轻型盔甲(女)", "中型盔甲(男)", "中型盔甲(女)", "青铜头盔", "魔法头盔", "金项链", "灯笼项链", "古铜戒指", "六角戒指", "铁手镯", "小手镯", "钢手镯"]
+        }
+      },
+      "dungeons": ["bichon_wild", "skeleton_cave", "zombie_cave", "woom_temple"]
+    },
+    {
+      "id": "mongchon_city",
+      "name": "盟重城",
+      "region": "盟重省",
+      "minLevel": 20,
+      "description": "沙漠中的贸易重镇，聚集了众多高等级冒险者。这里的商店出售更高级的物品。",
+      "npc": {
+        "药店": {
+          "name": "药店老板",
+          "greeting": "盟重的冒险者需要更好的药水！",
+          "sells": ["金创药(中)", "金创药(大)", "魔法药(中)", "魔法药(大)", "太阳水", "回城卷"]
+        },
+        "装备店": {
+          "name": "武器店老板",
+          "greeting": "沙漠中的战斗需要好武器！",
+          "sells": ["凌风", "凝霜", "修罗", "魔杖", "银蛇", "重盔甲(男)", "重盔甲(女)", "魔法长袍(男)", "魔法长袍(女)", "灵魂战衣(男)", "灵魂战衣(女)", "道士头盔", "骷髅头盔", "蓝翡翠项链", "白金戒指", "死神手套", "阎罗手套"]
+        }
+      },
+      "dungeons": ["centipede_cave", "pig_cave", "zuma_temple", "unknown_dark_hall"]
+    },
+    {
+      "id": "cangyue_island",
+      "name": "苍月岛",
+      "region": "苍月岛",
+      "minLevel": 35,
+      "description": "海外仙岛，风景秀丽但危机四伏。岛上商店出售稀有物品。",
+      "npc": {
+        "药店": {
+          "name": "药店老板",
+          "greeting": "岛上的怪物很危险，多带些药水吧！",
+          "sells": ["金创药(大)", "魔法药(大)", "太阳水", "回城卷"]
+        },
+        "装备店": {
+          "name": "武器店老板",
+          "greeting": "在这里你能找到珍稀的装备！",
+          "sells": ["井中月", "骨玉权杖", "龙纹剑", "战神盔甲(男)", "战神盔甲(女)", "恶魔长袍(男)", "恶魔长袍(女)", "幽灵战衣(男)", "幽灵战衣(女)", "黑铁头盔", "记忆项链", "龙之戒指", "骑士手镯", "龙之手镯", "心灵手镯"]
+        }
+      },
+      "dungeons": ["bone_cave", "bull_temple"]
+    },
+    {
+      "id": "bairimen",
+      "name": "白日门",
+      "region": "白日门",
+      "minLevel": 43,
+      "description": "古老的武学圣地，也是抵抗赤月恶魔的前线基地。这里的商店出售顶级装备。",
+      "npc": {
+        "药店": {
+          "name": "药店老板",
+          "greeting": "对抗赤月恶魔需要最好的药水！",
+          "sells": ["金创药(大)", "魔法药(大)", "太阳水", "回城卷"]
+        },
+        "装备店": {
+          "name": "武器店老板",
+          "greeting": "这里的装备是玛法大陆最好的！",
+          "sells": ["裁决之杖", "骨玉权杖", "龙纹剑", "黑铁头盔", "绿色项链", "力量戒指", "紫碧螺", "泰坦戒指", "圣战手镯", "法神手镯", "天尊手镯"]
+        }
+      },
+      "dungeons": ["red_moon_valley"]
+    }
+  ],
+  "dungeons": [
+    {
+      "id": "bichon_wild",
+      "name": "比奇城外",
+      "cityId": "bichon_city",
+      "minLevel": 1,
+      "maxLevel": 10,
+      "recommendedLevel": 1,
+      "monsters": ["鸡", "鹿", "稻草人", "多钩猫", "钉耙猫"],
+      "description": "比奇城外的荒野，适合新手冒险。常见温顺的小动物和低级怪物。"
+    },
+    {
+      "id": "skeleton_cave",
+      "name": "骷髅洞",
+      "cityId": "bichon_city",
+      "minLevel": 6,
+      "maxLevel": 15,
+      "recommendedLevel": 7,
+      "monsters": ["骷髅", "掷斧骷髅", "骷髅战士", "骷髅战将", "洞蛆", "蝎子"],
+      "description": "比奇矿区的深处，到处都是亡灵骷髅。阴暗的洞穴中潜伏着各种毒虫。"
+    },
+    {
+      "id": "zombie_cave",
+      "name": "僵尸洞",
+      "cityId": "bichon_city",
+      "minLevel": 11,
+      "maxLevel": 20,
+      "recommendedLevel": 12,
+      "monsters": ["僵尸", "腐尸", "爬行僵尸", "尸王"],
+      "description": "废弃的矿洞深处，大量僵尸在此徘徊。据说尸王守护着珍贵的技能书。"
+    },
+    {
+      "id": "woom_temple",
+      "name": "沃玛寺庙",
+      "cityId": "bichon_city",
+      "minLevel": 16,
+      "maxLevel": 25,
+      "recommendedLevel": 18,
+      "monsters": ["沃玛卫士", "火焰沃玛", "沃玛勇士", "沃玛教主"],
+      "description": "古老的沃玛教派寺庙，沃玛教主的巢穴。据说这里隐藏着沃玛号角的秘密。"
+    },
+    {
+      "id": "centipede_cave",
+      "name": "蜈蚣洞",
+      "cityId": "mongchon_city",
+      "minLevel": 21,
+      "maxLevel": 32,
+      "recommendedLevel": 24,
+      "monsters": ["蜈蚣", "钳虫", "黑色恶蛆", "巨型蠕虫", "跳跳蜂", "恶蛆王"],
+      "description": "盟重沙漠下的巨大洞穴网络，密密麻麻的毒虫在这里繁衍。"
+    },
+    {
+      "id": "pig_cave",
+      "name": "猪洞",
+      "cityId": "mongchon_city",
+      "minLevel": 27,
+      "maxLevel": 38,
+      "recommendedLevel": 30,
+      "monsters": ["红野猪", "黑野猪", "楔蛾", "角蝇", "白野猪", "邪恶毒蛇"],
+      "description": "也叫石墓，是盟重省著名的练级圣地。野猪族群盘踞在此，白野猪是这里的首领。"
+    },
+    {
+      "id": "zuma_temple",
+      "name": "祖玛寺庙",
+      "cityId": "mongchon_city",
+      "minLevel": 32,
+      "maxLevel": 42,
+      "recommendedLevel": 35,
+      "monsters": ["祖玛卫士", "祖玛雕像", "祖玛弓箭手", "祖玛教主"],
+      "description": "祖玛教派的神庙，祖玛教主统领着大量的祖玛卫士。这里出产许多极品装备。"
+    },
+    {
+      "id": "unknown_dark_hall",
+      "name": "未知暗殿",
+      "cityId": "mongchon_city",
+      "minLevel": 34,
+      "maxLevel": 48,
+      "recommendedLevel": 38,
+      "monsters": ["暗黑战士", "暗殿鸡", "暗殿鹿", "暗殿稻草人", "暗殿半兽人", "暗殿骷髅"],
+      "description": "神秘的暗殿，普通怪物在这里变得异常强大，但也携带更好的宝物。"
+    },
+    {
+      "id": "bone_cave",
+      "name": "骨魔洞",
+      "cityId": "cangyue_island",
+      "minLevel": 37,
+      "maxLevel": 46,
+      "recommendedLevel": 40,
+      "monsters": ["骷髅锤兵", "骷髅长枪兵", "骷髅刀斧手", "黄泉教主"],
+      "description": "苍月岛上的骨魔洞穴，黄泉教主统领着大量的骷髅士兵。"
+    },
+    {
+      "id": "bull_temple",
+      "name": "牛魔寺庙",
+      "cityId": "cangyue_island",
+      "minLevel": 42,
+      "maxLevel": 52,
+      "recommendedLevel": 44,
+      "monsters": ["牛魔斗士", "牛魔法师", "牛魔侍卫", "牛魔将军", "牛魔王"],
+      "description": "苍月岛最深处，牛魔王和他的牛魔军团镇守于此。传说牛魔王拥有最强的宝物。"
+    },
+    {
+      "id": "red_moon_valley",
+      "name": "赤月峡谷",
+      "cityId": "bairimen",
+      "minLevel": 45,
+      "maxLevel": 60,
+      "recommendedLevel": 48,
+      "monsters": ["幻影蜘蛛", "剧毒蜘蛛", "双头金刚", "双头血魔", "赤月恶魔"],
+      "description": "白日门外的恐怖峡谷，赤月恶魔的力量扭曲了整个区域。只有最强大的勇士才能在这里生存。"
+    }
+  ]
+}

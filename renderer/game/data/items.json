@@ -1,0 +1,17 @@
+{
+  "potions": [
+    { "name": "金创药(小)", "type": "potion", "effect": { "hp": 30 }, "buyPrice": 30, "sellPrice": 3, "description": "恢复生命值30点" },
+    { "name": "金创药(中)", "type": "potion", "effect": { "hp": 80 }, "buyPrice": 80, "sellPrice": 8, "description": "恢复生命值80点" },
+    { "name": "金创药(大)", "type": "potion", "effect": { "hp": 150 }, "buyPrice": 150, "sellPrice": 15, "description": "恢复生命值150点" },
+    { "name": "魔法药(小)", "type": "potion", "effect": { "mp": 40 }, "buyPrice": 40, "sellPrice": 4, "description": "恢复魔法值40点" },
+    { "name": "魔法药(中)", "type": "potion", "effect": { "mp": 100 }, "buyPrice": 100, "sellPrice": 10, "description": "恢复魔法值100点" },
+    { "name": "魔法药(大)", "type": "potion", "effect": { "mp": 200 }, "buyPrice": 200, "sellPrice": 20, "description": "恢复魔法值200点" },
+    { "name": "太阳水", "type": "potion", "effect": { "hp": 50, "mp": 80 }, "buyPrice": 300, "sellPrice": 30, "description": "同时恢复生命值50点和魔法值80点" },
+    { "name": "回城卷", "type": "scroll", "effect": { "teleport": true }, "buyPrice": 500, "sellPrice": 50, "description": "使用后立即返回最近的主城" }
+  ],
+  "autoPotionRules": {
+    "hpThreshold": 0.5,
+    "mpThreshold": 0.3,
+    "description": "当HP低于50%自动使用金创药，MP低于30%自动使用魔法药。优先使用最小的药水。"
+  }
+}

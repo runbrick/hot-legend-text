@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "Electron renderer directory layout conventions"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "UI component patterns for the game interface"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Game state management patterns"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Type conventions (if TypeScript used) or data validation patterns"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Code quality standards during implementation"}
+{"file": ".trellis/spec/guides/code-reuse-thinking-guide.md", "reason": "Reuse patterns for game logic modules"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Main process ↔ renderer process data flow patterns"}

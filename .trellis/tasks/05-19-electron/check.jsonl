@@ -1,0 +1,2 @@
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Verify code quality standards are met"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Verify main↔renderer data flow correctness"}
