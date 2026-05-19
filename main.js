@@ -2,6 +2,9 @@ const { app, BrowserWindow, Tray, Menu, ipcMain, nativeImage } = require('electr
 const path = require('path');
 const Store = require('electron-store');
 
+// Remove default menu bar
+Menu.setApplicationMenu(null);
+
 // Single instance lock
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
