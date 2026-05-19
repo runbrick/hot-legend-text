@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray, Menu, ipcMain, nativeImage } = require('electron');
+const { app, BrowserWindow, Tray, Menu, ipcMain, nativeImage, dialog } = require('electron');
 const path = require('path');
 const Store = require('electron-store');
 
@@ -48,10 +48,31 @@ function createWindow() {
 
   mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 
-  mainWindow.on('close', (event) => {
+  mainWindow.on('close', async (event) => {
     if (!isQuitting) {
       event.preventDefault();
-      mainWindow.hide();
+      const { response } = await dialog.showMessageBox(mainWindow, {
+        type: 'question',
+        title: '热血传奇放置',
+        message: '请选择操作',
+        detail: '关闭窗口后游戏仍可在托盘继续挂机',
+        buttons: ['最小化到托盘', '退出游戏', '取消'],
+        defaultId: 0,
+        cancelId: 2,
+        noLink: true
+      });
+      if (response === 0) {
+        // Minimize to tray
+        mainWindow.hide();
+      } else if (response === 1) {
+        // Quit
+        isQuitting = true;
+        mainWindow.webContents.send('before-quit');
+        setTimeout(() => {
+          app.quit();
+        }, 300);
+      }
+      // response === 2: cancel, do nothing
     }
   });
 
