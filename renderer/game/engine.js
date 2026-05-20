@@ -292,7 +292,8 @@ var GameEngine = {
         const potionData = window.gameData?.items?.potions?.find(p => p.name === name);
         if (potionData && potionData.effect[type]) {
           ch.removeItem(name, 1);
-          ch[type] = Math.min(ch[`max${type.toUpperCase()}`], ch[type] + potionData.effect[type]);
+          const maxKey = 'max' + type.charAt(0).toUpperCase() + type.slice(1);
+          ch[type] = Math.min(ch[maxKey], ch[type] + potionData.effect[type]);
           return;
         }
       }

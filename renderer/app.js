@@ -279,6 +279,8 @@
     // Location & Navigation
     renderNavigation();
     renderShop();
+    renderSkills();
+    renderInventory();
 
     // Status
     const inCity = GameEngine.isInCity();
@@ -443,6 +445,13 @@
         document.querySelectorAll('#shop-modal-body .modal-shop-item').forEach(el => el.classList.remove('selected'));
         item.classList.add('selected');
       });
+      // Double-click to view equipment detail
+      item.addEventListener('dblclick', () => {
+        const eq = findEquipmentByName(item.dataset.item);
+        if (eq) {
+          showEquipDetail(item.dataset.item, 'shop');
+        }
+      });
     });
 
     // Quantity input
@@ -524,11 +533,15 @@
       }
     }
 
-    html += `<div class="detail-row"><span class="detail-label">出售价格</span><span class="detail-value">${eq.sellPrice} 金币</span></div>`;
+    if (source === 'shop') {
+      const buyPrice = Math.floor(eq.sellPrice * 3);
+      html += `<div class="detail-row"><span class="detail-label">购买价格</span><span class="detail-value">${buyPrice} 金币</span></div>`;
+    } else {
+      html += `<div class="detail-row"><span class="detail-label">出售价格</span><span class="detail-value">${eq.sellPrice} 金币</span></div>`;
+    }
 
-    // If equipment is currently equipped, show comparison with nothing
-    // If viewing from inventory while having something equipped, show comparison
-    if (source === 'inventory') {
+    // If viewing from inventory/shop while having something equipped, show comparison
+    if (source === 'inventory' || source === 'shop') {
       const charSlotKey = getCharSlotKey(eq.slot);
       const currentEquip = currentCharacter.equipment[charSlotKey];
       if (currentEquip) {
@@ -552,7 +565,7 @@
       }
     }
 
-    // Check if character can equip
+    // Check if character can equip (inventory only, not shop)
     if (source === 'inventory') {
       const canEquip = Inventory.canEquip(currentCharacter, eq);
       if (!canEquip) {
@@ -567,6 +580,13 @@
       }
     }
 
+    if (source === 'shop') {
+      const buyPrice = Math.floor(eq.sellPrice * 3);
+      if (currentCharacter.gold < buyPrice) {
+        html += `<div class="detail-note">⚠ 金币不足，无法购买</div>`;
+      }
+    }
+
     document.getElementById('equip-detail-body').innerHTML = html;
 
     // Action button
@@ -574,6 +594,22 @@
     if (source === 'equipment') {
       actionBtn.textContent = '卸下';
       actionBtn.className = 'btn equip-detail-action-btn danger';
+      actionBtn.disabled = false;
+      actionBtn.style.opacity = '1';
+      actionBtn.style.cursor = 'pointer';
+    } else if (source === 'shop') {
+      actionBtn.textContent = '购买';
+      actionBtn.className = 'btn equip-detail-action-btn';
+      const buyPrice = Math.floor(eq.sellPrice * 3);
+      if (currentCharacter.gold < buyPrice) {
+        actionBtn.disabled = true;
+        actionBtn.style.opacity = '0.4';
+        actionBtn.style.cursor = 'not-allowed';
+      } else {
+        actionBtn.disabled = false;
+        actionBtn.style.opacity = '1';
+        actionBtn.style.cursor = 'pointer';
+      }
     } else {
       actionBtn.textContent = '装备';
       actionBtn.className = 'btn equip-detail-action-btn';
@@ -627,6 +663,18 @@
       renderEquipment();
       renderInventory();
       updateGameUI();
+    } else if (equipDetailSource === 'shop') {
+      // Buy from shop
+      const result = GameEngine.buyFromShop(equipDetailItemName, 1);
+      if (result.success) {
+        showToast(`购买了 ${equipDetailItemName}`);
+        closeEquipDetail();
+        closeShopModal();
+        renderInventory();
+        updateGameUI();
+      } else {
+        showToast(result.error);
+      }
     } else if (equipDetailSource === 'inventory') {
       // Equip
       const result = Inventory.equip(currentCharacter, equipDetailItemName);

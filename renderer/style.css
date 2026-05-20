@@ -512,6 +512,10 @@ body {
   justify-content: center;
 }
 
+#equip-detail-modal {
+  z-index: 300;
+}
+
 .modal-box {
   background: var(--bg-panel);
   border: 2px solid var(--border-light);
