@@ -375,8 +375,6 @@
     const panel = document.getElementById('shop-panel');
     const content = document.getElementById('shop-content');
     const city = GameEngine.getCurrentCity();
-    selectedShopItem = null;
-    shopBuyQty = 1;
 
     if (!city) {
       panel.style.display = 'none';
@@ -387,64 +385,98 @@
 
     let html = '';
     for (const [npcName, npcData] of Object.entries(city.npc)) {
-      html += `<div class="shop-npc">
-        <div class="shop-npc-name">${npcData.name}（${npcName}）</div>
-        <div class="shop-npc-greet">"${npcData.greeting}"</div>
-        <div class="shop-items">`;
-      for (const itemName of npcData.sells) {
-        const potion = window.gameData.items.potions.find(p => p.name === itemName);
-        const equipment = findEquipmentByName(itemName);
-        const price = potion ? potion.buyPrice : equipment ? Math.floor(equipment.sellPrice * 3) : 0;
-        const cls = selectedShopItem === itemName ? 'shop-item selected' : 'shop-item';
-        html += `<div class="${cls}" data-item="${itemName}" data-price="${price}">
-          <span class="shop-item-name">${itemName}</span>
-          <span class="shop-item-price">${price}金币</span>
-        </div>`;
-      }
-      html += `</div></div>`;
+      const typeLabel = npcName.includes('药') ? '出售各类药水' : '出售武器、衣服、首饰等装备';
+      html += `<div class="shop-npc-card" data-npc="${npcName}">
+        <span class="npc-name">${npcData.name}</span>
+        <span class="npc-type">${npcName} — ${npcData.greeting}</span>
+        <span class="npc-hint">双击打开商店</span>
+      </div>`;
     }
-
-    html += `<div class="shop-buy-row">
-      <span>数量: <input type="number" id="shop-qty" class="shop-qty" value="1" min="1" max="99"></span>
-      <button id="btn-buy-item" class="btn btn-small">购买</button>
-    </div>`;
 
     content.innerHTML = html;
 
-    // Shop item selection
-    content.querySelectorAll('.shop-item').forEach(item => {
+    // Double-click to open modal
+    content.querySelectorAll('.shop-npc-card').forEach(card => {
+      card.addEventListener('dblclick', () => {
+        openShopModal(card.dataset.npc);
+      });
+    });
+  }
+
+  function openShopModal(npcName) {
+    const city = GameEngine.getCurrentCity();
+    if (!city || !city.npc[npcName]) return;
+
+    const npcData = city.npc[npcName];
+    selectedShopItem = null;
+    shopBuyQty = 1;
+
+    const modal = document.getElementById('shop-modal');
+    document.getElementById('shop-modal-title').textContent = `${npcData.name}（${npcName}）`;
+    document.getElementById('shop-modal-qty').value = 1;
+
+    // Build item list
+    let html = '';
+    for (const itemName of npcData.sells) {
+      const potion = window.gameData.items.potions.find(p => p.name === itemName);
+      const equipment = findEquipmentByName(itemName);
+      const price = potion ? potion.buyPrice : equipment ? Math.floor(equipment.sellPrice * 3) : 0;
+      const desc = potion ? potion.description : equipment ? `${equipment.slot} | Lv${equipment.level}+` : '';
+      html += `<div class="modal-shop-item" data-item="${itemName}" data-price="${price}">
+        <span class="shop-item-left">
+          <span class="shop-item-name">${itemName}</span>
+          <span class="shop-item-desc">${desc}</span>
+        </span>
+        <span class="shop-item-price">${price}金币</span>
+      </div>`;
+    }
+    document.getElementById('shop-modal-body').innerHTML = html;
+
+    // Item selection in modal
+    document.querySelectorAll('#shop-modal-body .modal-shop-item').forEach(item => {
       item.addEventListener('click', () => {
         selectedShopItem = item.dataset.item;
-        document.getElementById('shop-qty').value = 1;
+        document.getElementById('shop-modal-qty').value = 1;
         shopBuyQty = 1;
-        renderShop();
+        document.querySelectorAll('#shop-modal-body .modal-shop-item').forEach(el => el.classList.remove('selected'));
+        item.classList.add('selected');
       });
     });
 
     // Quantity input
-    const qtyInput = document.getElementById('shop-qty');
-    if (qtyInput) {
-      qtyInput.addEventListener('change', () => {
-        shopBuyQty = Math.max(1, Math.min(99, parseInt(qtyInput.value) || 1));
-      });
-    }
+    const qtyInput = document.getElementById('shop-modal-qty');
+    qtyInput.onchange = () => {
+      shopBuyQty = Math.max(1, Math.min(99, parseInt(qtyInput.value) || 1));
+    };
 
     // Buy button
-    const buyBtn = document.getElementById('btn-buy-item');
-    if (buyBtn) {
-      buyBtn.addEventListener('click', () => {
-        if (!selectedShopItem) { showToast('请先选择要购买的物品'); return; }
-        shopBuyQty = Math.max(1, Math.min(99, parseInt(document.getElementById('shop-qty').value) || 1));
-        const result = GameEngine.buyFromShop(selectedShopItem, shopBuyQty);
-        if (result.success) {
-          showToast(`购买了 ${selectedShopItem} x${shopBuyQty}`);
-          renderInventory();
-          updateGameUI();
-        } else {
-          showToast(result.error);
-        }
-      });
-    }
+    const buyBtn = document.getElementById('btn-buy-modal');
+    buyBtn.onclick = () => {
+      if (!selectedShopItem) { showToast('请先在列表中点击选择物品'); return; }
+      shopBuyQty = Math.max(1, Math.min(99, parseInt(qtyInput.value) || 1));
+      const result = GameEngine.buyFromShop(selectedShopItem, shopBuyQty);
+      if (result.success) {
+        showToast(`购买了 ${selectedShopItem} x${shopBuyQty}`);
+        renderInventory();
+        updateGameUI();
+        openShopModal(npcName); // Refresh modal
+      } else {
+        showToast(result.error);
+      }
+    };
+
+    modal.style.display = 'flex';
+  }
+
+  // Close modal button + overlay click
+  document.getElementById('shop-modal-close').addEventListener('click', closeShopModal);
+  document.getElementById('shop-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'shop-modal') closeShopModal();
+  });
+
+  function closeShopModal() {
+    document.getElementById('shop-modal').style.display = 'none';
+    selectedShopItem = null;
   }
 
   function findEquipmentByName(name) {

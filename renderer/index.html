@@ -106,6 +106,21 @@
   <!-- Toast notification -->
   <div id="toast" class="toast"></div>
 
+  <!-- Shop Modal -->
+  <div id="shop-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-title" id="shop-modal-title"></div>
+      <div class="modal-body" id="shop-modal-body"></div>
+      <div class="modal-actions">
+        <button id="shop-modal-close" class="btn">关闭</button>
+        <span class="shop-buy-row-modal">
+          数量 <input type="number" id="shop-modal-qty" class="shop-qty" value="1" min="1" max="99">
+          <button id="btn-buy-modal" class="btn">购买</button>
+        </span>
+      </div>
+    </div>
+  </div>
+
   <script src="game/character.js"></script>
   <script src="game/inventory.js"></script>
   <script src="game/engine.js"></script>

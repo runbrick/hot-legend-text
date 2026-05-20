@@ -483,6 +483,90 @@ body {
 
 .shop-qty:focus { border-color: var(--border-light); outline: none; }
 
+/* Shop NPC cards (default view) */
+.shop-npc-card {
+  border: 1px solid var(--border-gold);
+  background: var(--btn-bg);
+  padding: 8px;
+  margin: 4px 0;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+
+.shop-npc-card:hover { border-color: var(--border-light); background: var(--btn-hover); }
+
+.shop-npc-card .npc-icon { font-size: 20px; display: block; }
+.shop-npc-card .npc-name { color: var(--text-yellow); font-size: 13px; display: block; }
+.shop-npc-card .npc-type { color: var(--text-dim); font-size: 11px; display: block; }
+.shop-npc-card .npc-hint { color: #555; font-size: 10px; margin-top: 2px; }
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box {
+  background: var(--bg-panel);
+  border: 2px solid var(--border-light);
+  min-width: 320px;
+  max-width: 420px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-title {
+  background: #1a0e04;
+  border-bottom: 1px solid var(--border-gold);
+  color: var(--text-yellow);
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 16px;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+.modal-body {
+  padding: 12px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-actions {
+  border-top: 1px solid var(--border-gold);
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Modal shop items */
+.modal-shop-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  border-bottom: 1px dotted #2a1e0e;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.modal-shop-item:hover { background: #231808; }
+.modal-shop-item.selected { background: #302010; border-color: var(--border-light); }
+
+.modal-shop-item .shop-item-left { text-align: left; }
+.modal-shop-item .shop-item-left .shop-item-name { color: var(--text-gold); font-size: 13px; display: block; }
+.modal-shop-item .shop-item-left .shop-item-desc { color: var(--text-dim); font-size: 10px; }
+.modal-shop-item .shop-item-price { color: var(--text-yellow); font-size: 13px; white-space: nowrap; }
+
 /* Skills */
 .skills-display {
   font-size: 12px;
