@@ -668,6 +668,109 @@ body {
   margin-left: auto;
 }
 
+/* Equipment Detail Modal */
+.equip-detail-box {
+  min-width: 300px;
+  max-width: 360px;
+}
+
+.equip-detail-box .detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 13px;
+  border-bottom: 1px dotted #2a1e0e;
+}
+
+.equip-detail-box .detail-row .detail-label {
+  color: var(--text-dim);
+}
+
+.equip-detail-box .detail-row .detail-value {
+  color: var(--text-yellow);
+}
+
+.equip-detail-box .detail-row .detail-value.stat-positive {
+  color: #33cc33;
+}
+
+.equip-detail-box .detail-row .detail-value.stat-negative {
+  color: var(--hp-red);
+}
+
+.equip-detail-box .detail-section-title {
+  color: var(--text-gold);
+  font-size: 12px;
+  font-weight: bold;
+  border-bottom: 1px solid var(--border-gold);
+  padding-bottom: 3px;
+  margin: 8px 0 4px;
+}
+
+.equip-detail-box .detail-note {
+  color: var(--text-dim);
+  font-size: 11px;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.equip-detail-box .equip-compare {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border-gold);
+}
+
+.equip-compare .compare-title {
+  color: var(--text-gold);
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.equip-compare .compare-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  padding: 2px 0;
+}
+
+.equip-compare .compare-stat {
+  color: var(--text-dim);
+  width: 60px;
+}
+
+.equip-compare .compare-diff {
+  width: 70px;
+  text-align: right;
+}
+
+.equip-compare .compare-diff.up { color: #33cc33; }
+.equip-compare .compare-diff.down { color: var(--hp-red); }
+.equip-compare .compare-diff.same { color: var(--text-dim); }
+
+.equip-detail-action-btn {
+  border-color: #33aa33;
+  color: #33aa33;
+}
+
+.equip-detail-action-btn:hover {
+  background: #33aa33;
+  color: #fff;
+}
+
+.equip-detail-action-btn.danger {
+  border-color: var(--hp-red);
+  color: var(--hp-red);
+}
+
+.equip-detail-action-btn.danger:hover {
+  background: var(--hp-red);
+  color: #fff;
+}
+
+/* Make inventory items show hover cursor for detail */
+.inv-item.equippable { cursor: pointer; }
+
 /* Toast */
 .toast {
   position: fixed;

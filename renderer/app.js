@@ -7,6 +7,8 @@
   let selectedInventoryItem = null;
   let selectedShopItem = null;
   let shopBuyQty = 1;
+  let equipDetailSource = null; // 'equipment' | 'inventory'
+  let equipDetailItemName = null;
 
   // DOM elements
   const charSelectScreen = document.getElementById('char-select-screen');
@@ -479,6 +481,173 @@
     selectedShopItem = null;
   }
 
+  // ========== Equipment Detail Modal ==========
+  function showEquipDetail(itemName, source) {
+    const eq = Inventory.findEquipment(itemName);
+    if (!eq) return;
+
+    equipDetailSource = source;
+    equipDetailItemName = itemName;
+
+    const modal = document.getElementById('equip-detail-modal');
+    document.getElementById('equip-detail-title').textContent = `装备详情 — ${eq.name}`;
+
+    // Map slot names
+    const slotLabels = {
+      weapons: '武器', armors: '衣服', helmets: '头盔',
+      necklaces: '项链', bracelets: '手镯', rings: '戒指'
+    };
+    const slotLabel = slotLabels[eq.slot] || eq.slot;
+
+    // Build detail body
+    let html = '';
+    html += `<div class="detail-row"><span class="detail-label">类型</span><span class="detail-value">${slotLabel}</span></div>`;
+    html += `<div class="detail-row"><span class="detail-label">需求等级</span><span class="detail-value">Lv.${eq.level}</span></div>`;
+    if (eq.classes && eq.classes.length > 0) {
+      html += `<div class="detail-row"><span class="detail-label">需求职业</span><span class="detail-value">${eq.classes.join(' / ')}</span></div>`;
+    } else {
+      html += `<div class="detail-row"><span class="detail-label">需求职业</span><span class="detail-value">全职业</span></div>`;
+    }
+
+    // Stats
+    if (eq.stats && Object.keys(eq.stats).length > 0) {
+      html += `<div class="detail-section-title">属性加成</div>`;
+      const statLabels = {
+        attack: '攻击力', defense: '防御力',
+        magicAttack: '魔法攻击', magicDefense: '魔法防御',
+        hp: '生命值', mp: '魔法值'
+      };
+      for (const [stat, val] of Object.entries(eq.stats)) {
+        if (val === 0) continue;
+        const label = statLabels[stat] || stat;
+        html += `<div class="detail-row"><span class="detail-label">${label}</span><span class="detail-value stat-positive">+${val}</span></div>`;
+      }
+    }
+
+    html += `<div class="detail-row"><span class="detail-label">出售价格</span><span class="detail-value">${eq.sellPrice} 金币</span></div>`;
+
+    // If equipment is currently equipped, show comparison with nothing
+    // If viewing from inventory while having something equipped, show comparison
+    if (source === 'inventory') {
+      const charSlotKey = getCharSlotKey(eq.slot);
+      const currentEquip = currentCharacter.equipment[charSlotKey];
+      if (currentEquip) {
+        const diff = Inventory.compareEquipment(currentEquip, itemName);
+        html += `<div class="equip-compare">
+          <div class="compare-title">对比当前装备: ${currentEquip}</div>`;
+        const diffLabels = { attack: '攻击力', defense: '防御力', magicAttack: '魔法攻击', magicDefense: '魔法防御', hp: '生命值', mp: '魔法值' };
+        let hasDiff = false;
+        for (const [stat, label] of Object.entries(diffLabels)) {
+          const d = diff[stat];
+          if (d === 0) continue;
+          hasDiff = true;
+          const cls = d > 0 ? 'up' : 'down';
+          const sign = d > 0 ? '+' : '';
+          html += `<div class="compare-row"><span class="compare-stat">${label}</span><span class="compare-diff ${cls}">${sign}${d}</span></div>`;
+        }
+        if (!hasDiff) {
+          html += `<div class="compare-row"><span class="compare-diff same">属性相同</span></div>`;
+        }
+        html += `</div>`;
+      }
+    }
+
+    // Check if character can equip
+    if (source === 'inventory') {
+      const canEquip = Inventory.canEquip(currentCharacter, eq);
+      if (!canEquip) {
+        let reason = '';
+        if (currentCharacter.level < eq.level) reason = `需要等级 Lv.${eq.level}`;
+        else if (eq.classes && !eq.classes.includes(currentCharacter.className)) reason = `职业不符（需要: ${eq.classes.join(' / ')}）`;
+        html += `<div class="detail-note">⚠ ${reason}，无法装备</div>`;
+      }
+
+      if (currentCharacter.level < eq.level) {
+        html += `<div class="detail-note">提示: 可在背包中保留此装备，达到等级后再装备</div>`;
+      }
+    }
+
+    document.getElementById('equip-detail-body').innerHTML = html;
+
+    // Action button
+    const actionBtn = document.getElementById('equip-detail-btn-action');
+    if (source === 'equipment') {
+      actionBtn.textContent = '卸下';
+      actionBtn.className = 'btn equip-detail-action-btn danger';
+    } else {
+      actionBtn.textContent = '装备';
+      actionBtn.className = 'btn equip-detail-action-btn';
+      if (!Inventory.canEquip(currentCharacter, eq)) {
+        actionBtn.disabled = true;
+        actionBtn.style.opacity = '0.4';
+        actionBtn.style.cursor = 'not-allowed';
+      } else {
+        actionBtn.disabled = false;
+        actionBtn.style.opacity = '1';
+        actionBtn.style.cursor = 'pointer';
+      }
+    }
+
+    modal.style.display = 'flex';
+  }
+
+  function getCharSlotKey(dataSlot) {
+    const slotMap = {
+      weapons: 'weapon', armors: 'armor', helmets: 'helmet',
+      necklaces: 'necklace', bracelets: 'bracelet1', rings: 'ring1'
+    };
+    return slotMap[dataSlot] || dataSlot;
+  }
+
+  function closeEquipDetail() {
+    document.getElementById('equip-detail-modal').style.display = 'none';
+    equipDetailSource = null;
+    equipDetailItemName = null;
+  }
+
+  // Equip detail modal buttons
+  document.getElementById('equip-detail-btn-action').addEventListener('click', () => {
+    if (!equipDetailItemName) return;
+    if (equipDetailSource === 'equipment') {
+      // Unequip
+      const eq = Inventory.findEquipment(equipDetailItemName);
+      const charSlotKey = getCharSlotKey(eq.slot);
+      // Find which actual slot has this item (for bracelets/rings)
+      let actualSlot = charSlotKey;
+      if (eq.slot === 'bracelets') {
+        if (currentCharacter.equipment.bracelet1 === equipDetailItemName) actualSlot = 'bracelet1';
+        else if (currentCharacter.equipment.bracelet2 === equipDetailItemName) actualSlot = 'bracelet2';
+      } else if (eq.slot === 'rings') {
+        if (currentCharacter.equipment.ring1 === equipDetailItemName) actualSlot = 'ring1';
+        else if (currentCharacter.equipment.ring2 === equipDetailItemName) actualSlot = 'ring2';
+      }
+      Inventory.unequip(currentCharacter, actualSlot);
+      showToast(`卸下了 ${equipDetailItemName}`);
+      closeEquipDetail();
+      renderEquipment();
+      renderInventory();
+      updateGameUI();
+    } else if (equipDetailSource === 'inventory') {
+      // Equip
+      const result = Inventory.equip(currentCharacter, equipDetailItemName);
+      if (result.success) {
+        showToast(`装备了 ${equipDetailItemName}`);
+        selectedInventoryItem = null;
+        closeEquipDetail();
+        renderInventory();
+        renderEquipment();
+        updateGameUI();
+      } else {
+        showToast(result.error);
+      }
+    }
+  });
+
+  document.getElementById('equip-detail-close').addEventListener('click', closeEquipDetail);
+  document.getElementById('equip-detail-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'equip-detail-modal') closeEquipDetail();
+  });
+
   function findEquipmentByName(name) {
     const eq = window.gameData.equipment.equipment;
     for (const slot of Object.keys(eq)) {
@@ -511,11 +680,9 @@
     el.querySelectorAll('.equip-slot-item:not(.empty)').forEach(item => {
       item.addEventListener('click', () => {
         const slot = item.dataset.slot;
-        if (currentCharacter.equipment[slot] && confirm(`卸下 ${currentCharacter.equipment[slot]} ？`)) {
-          Inventory.unequip(currentCharacter, slot);
-          renderEquipment();
-          renderInventory();
-          updateGameUI();
+        const itemName = currentCharacter.equipment[slot];
+        if (itemName) {
+          showEquipDetail(itemName, 'equipment');
         }
       });
     });
@@ -574,6 +741,14 @@
       item.addEventListener('click', () => {
         selectedInventoryItem = item.dataset.name;
         renderInventory();
+      });
+      // Double-click to view equipment detail
+      item.addEventListener('dblclick', () => {
+        const name = item.dataset.name;
+        const eq = Inventory.findEquipment(name);
+        if (eq) {
+          showEquipDetail(name, 'inventory');
+        }
       });
     });
   }
