@@ -594,6 +594,17 @@ body {
   display: block;
 }
 
+/* Inventory Modal */
+#inventory-modal .modal-box {
+  min-width: 320px;
+  max-width: 400px;
+}
+
+#inventory-modal-body {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
 /* Inventory */
 .inventory-display {
   font-size: 12px;

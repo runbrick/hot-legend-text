@@ -179,7 +179,6 @@
     updateGameUI();
     renderEquipment();
     renderSkills();
-    renderInventory();
     renderAllocateButtons();
     renderNavigation();
     renderShop();
@@ -280,7 +279,11 @@
     renderNavigation();
     renderShop();
     renderSkills();
-    renderInventory();
+    // Update inventory button count
+    const invBtn = document.getElementById('btn-inventory');
+    if (invBtn) {
+      invBtn.textContent = `背包 (${ch.inventory.length})`;
+    }
 
     // Status
     const inCity = GameEngine.isInCity();
@@ -468,7 +471,6 @@
       const result = GameEngine.buyFromShop(selectedShopItem, shopBuyQty);
       if (result.success) {
         showToast(`购买了 ${selectedShopItem} x${shopBuyQty}`);
-        renderInventory();
         updateGameUI();
         openShopModal(npcName); // Refresh modal
       } else {
@@ -661,7 +663,6 @@
       showToast(`卸下了 ${equipDetailItemName}`);
       closeEquipDetail();
       renderEquipment();
-      renderInventory();
       updateGameUI();
     } else if (equipDetailSource === 'shop') {
       // Buy from shop
@@ -670,7 +671,6 @@
         showToast(`购买了 ${equipDetailItemName}`);
         closeEquipDetail();
         closeShopModal();
-        renderInventory();
         updateGameUI();
       } else {
         showToast(result.error);
@@ -682,7 +682,6 @@
         showToast(`装备了 ${equipDetailItemName}`);
         selectedInventoryItem = null;
         closeEquipDetail();
-        renderInventory();
         renderEquipment();
         updateGameUI();
       } else {
@@ -760,45 +759,55 @@
   }
 
   // ========== Inventory ==========
-  function renderInventory() {
-    const el = document.getElementById('inventory-display');
+  function openInventoryModal() {
+    const modal = document.getElementById('inventory-modal');
+    const body = document.getElementById('inventory-modal-body');
     const ch = currentCharacter;
-    const countEl = document.getElementById('inv-count');
+    selectedInventoryItem = null;
 
     if (!ch.inventory.length) {
-      el.innerHTML = '<span style="color:#555;">背包为空</span>';
-      countEl.textContent = '(0)';
-      return;
+      body.innerHTML = '<span style="color:#555;text-align:center;display:block;padding:20px;">背包为空</span>';
+    } else {
+      let html = '';
+      for (const item of ch.inventory) {
+        const isEquippable = !!Inventory.getEquipmentSlot(item.name);
+        const eqClass = isEquippable ? ' equippable' : '';
+        html += `<div class="inv-item${eqClass}" data-name="${item.name}">
+          <span class="inv-item-name">${item.name}${isEquippable ? ' ★' : ''}</span>
+          <span class="inv-item-qty">x${item.quantity}</span>
+        </div>`;
+      }
+      body.innerHTML = html;
+
+      body.querySelectorAll('.inv-item').forEach(item => {
+        item.addEventListener('click', () => {
+          selectedInventoryItem = item.dataset.name;
+          body.querySelectorAll('.inv-item').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected');
+        });
+        // Double-click to view equipment detail
+        item.addEventListener('dblclick', () => {
+          const name = item.dataset.name;
+          const eq = Inventory.findEquipment(name);
+          if (eq) {
+            showEquipDetail(name, 'inventory');
+          }
+        });
+      });
     }
 
-    countEl.textContent = `(${ch.inventory.length})`;
+    modal.style.display = 'flex';
+  }
 
-    let html = '';
-    for (const item of ch.inventory) {
-      const isEquippable = !!Inventory.getEquipmentSlot(item.name);
-      const cls = selectedInventoryItem === item.name ? 'inv-item selected' : 'inv-item';
-      const eqClass = isEquippable ? ' equippable' : '';
-      html += `<div class="${cls}${eqClass}" data-name="${item.name}">
-        <span class="inv-item-name">${item.name}${isEquippable ? ' ★' : ''}</span>
-        <span class="inv-item-qty">x${item.quantity}</span>
-      </div>`;
+  function closeInventoryModal() {
+    document.getElementById('inventory-modal').style.display = 'none';
+    selectedInventoryItem = null;
+  }
+
+  function refreshInventoryModal() {
+    if (document.getElementById('inventory-modal').style.display === 'flex') {
+      openInventoryModal();
     }
-    el.innerHTML = html;
-
-    el.querySelectorAll('.inv-item').forEach(item => {
-      item.addEventListener('click', () => {
-        selectedInventoryItem = item.dataset.name;
-        renderInventory();
-      });
-      // Double-click to view equipment detail
-      item.addEventListener('dblclick', () => {
-        const name = item.dataset.name;
-        const eq = Inventory.findEquipment(name);
-        if (eq) {
-          showEquipDetail(name, 'inventory');
-        }
-      });
-    });
   }
 
   // ========== Stat Allocation ==========
@@ -864,13 +873,23 @@
     saveAndExit();
   });
 
-  document.getElementById('btn-equip-selected').addEventListener('click', () => {
+  // Inventory modal buttons
+  document.getElementById('btn-inventory').addEventListener('click', () => {
+    openInventoryModal();
+  });
+
+  document.getElementById('btn-inv-close').addEventListener('click', closeInventoryModal);
+  document.getElementById('inventory-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'inventory-modal') closeInventoryModal();
+  });
+
+  document.getElementById('btn-inv-equip').addEventListener('click', () => {
     if (!selectedInventoryItem) { showToast('请先在背包中点击选择物品'); return; }
     const result = Inventory.equip(currentCharacter, selectedInventoryItem);
     if (result.success) {
       showToast(`装备了 ${selectedInventoryItem}`);
       selectedInventoryItem = null;
-      renderInventory();
+      refreshInventoryModal();
       renderEquipment();
       updateGameUI();
     } else {
@@ -878,7 +897,7 @@
     }
   });
 
-  document.getElementById('btn-sell-selected').addEventListener('click', () => {
+  document.getElementById('btn-inv-sell').addEventListener('click', () => {
     if (!selectedInventoryItem) { showToast('请先在背包中点击选择物品'); return; }
     const eq = Inventory.findEquipment(selectedInventoryItem);
     const potion = window.gameData.items.potions.find(p => p.name === selectedInventoryItem);
@@ -886,18 +905,18 @@
     if (confirm(`确定出售 ${selectedInventoryItem}？售价: ${price} 金币`)) {
       Inventory.sell(currentCharacter, selectedInventoryItem);
       selectedInventoryItem = null;
-      renderInventory();
+      refreshInventoryModal();
       updateGameUI();
       showToast('出售成功');
     }
   });
 
-  document.getElementById('btn-discard-selected').addEventListener('click', () => {
+  document.getElementById('btn-inv-discard').addEventListener('click', () => {
     if (!selectedInventoryItem) { showToast('请先在背包中点击选择物品'); return; }
     if (confirm(`确定丢弃 ${selectedInventoryItem} 吗？（不可恢复）`)) {
       Inventory.discard(currentCharacter, selectedInventoryItem);
       selectedInventoryItem = null;
-      renderInventory();
+      refreshInventoryModal();
       updateGameUI();
       showToast('物品已丢弃');
     }

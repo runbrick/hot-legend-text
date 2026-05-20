@@ -81,16 +81,6 @@
           <div id="skills-display" class="skills-display"></div>
         </div>
 
-        <!-- Inventory -->
-        <div class="panel inventory-panel">
-          <div class="panel-title">背包 <span id="inv-count" class="count"></span></div>
-          <div id="inventory-display" class="inventory-display"></div>
-          <div class="inv-actions">
-            <button id="btn-equip-selected" class="btn btn-small">装备</button>
-            <button id="btn-sell-selected" class="btn btn-small">出售</button>
-            <button id="btn-discard-selected" class="btn btn-small">丢弃</button>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -99,6 +89,7 @@
       <button id="btn-start-stop" class="btn">暂停挂机</button>
       <button id="btn-save" class="btn">手动保存</button>
       <button id="btn-exit" class="btn">返回角色选择</button>
+      <button id="btn-inventory" class="btn">背包 (0)</button>
       <span class="gold-display">金币: <span id="gold-text">0</span></span>
     </div>
   </div>
@@ -114,6 +105,20 @@
       <div class="modal-actions" id="equip-detail-actions">
         <button id="equip-detail-btn-action" class="btn equip-detail-action-btn">装备</button>
         <button id="equip-detail-close" class="btn">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inventory Modal -->
+  <div id="inventory-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-title">背包</div>
+      <div class="modal-body" id="inventory-modal-body"></div>
+      <div class="modal-actions">
+        <button id="btn-inv-equip" class="btn btn-small">装备</button>
+        <button id="btn-inv-sell" class="btn btn-small">出售</button>
+        <button id="btn-inv-discard" class="btn btn-small">丢弃</button>
+        <button id="btn-inv-close" class="btn btn-small">关闭</button>
       </div>
     </div>
   </div>
