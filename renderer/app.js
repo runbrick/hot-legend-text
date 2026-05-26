@@ -7,7 +7,7 @@
   let selectedInventoryItem = null;
   let selectedShopItem = null;
   let shopBuyQty = 1;
-  let equipDetailSource = null; // 'equipment' | 'inventory'
+  let equipDetailSource = null; // 'equipment' | 'inventory' | 'slotChoice'
   let equipDetailItemName = null;
 
   // DOM elements
@@ -599,38 +599,62 @@
 
     document.getElementById('equip-detail-body').innerHTML = html;
 
-    // Action button
+    const slotChoiceEl = document.getElementById('equip-detail-slot-choice');
     const actionBtn = document.getElementById('equip-detail-btn-action');
-    if (source === 'equipment') {
-      actionBtn.textContent = '卸下';
-      actionBtn.className = 'btn equip-detail-action-btn danger';
-      actionBtn.disabled = false;
-      actionBtn.style.opacity = '1';
-      actionBtn.style.cursor = 'pointer';
-    } else if (source === 'shop') {
-      actionBtn.textContent = '购买';
-      actionBtn.className = 'btn equip-detail-action-btn';
-      const buyPrice = Math.floor(eq.sellPrice * 3);
-      if (currentCharacter.gold < buyPrice) {
-        actionBtn.disabled = true;
-        actionBtn.style.opacity = '0.4';
-        actionBtn.style.cursor = 'not-allowed';
-      } else {
-        actionBtn.disabled = false;
-        actionBtn.style.opacity = '1';
-        actionBtn.style.cursor = 'pointer';
+    slotChoiceEl.style.display = 'none';
+    actionBtn.style.display = '';
+
+    // For inventory items that are rings/bracelets with both slots occupied, show slot choice
+    const isDualSlot = (eq.slot === 'bracelets' || eq.slot === 'rings');
+    if (source === 'inventory' && isDualSlot && Inventory.canEquip(currentCharacter, eq)) {
+      const ch = currentCharacter;
+      const slotLabels = { bracelets: ['手镯1', '手镯2'], rings: ['戒指1', '戒指2'] };
+      const slotKeys = eq.slot === 'bracelets' ? ['bracelet1', 'bracelet2'] : ['ring1', 'ring2'];
+      const bothOccupied = ch.equipment[slotKeys[0]] && ch.equipment[slotKeys[1]];
+      if (bothOccupied) {
+        equipDetailSource = 'slotChoice';
+        const name1 = ch.equipment[slotKeys[0]] || '空';
+        const name2 = ch.equipment[slotKeys[1]] || '空';
+        document.getElementById('equip-detail-btn-slot1').textContent = `替换${slotLabels[eq.slot][0]} ${name1}`;
+        document.getElementById('equip-detail-btn-slot2').textContent = `替换${slotLabels[eq.slot][1]} ${name2}`;
+        slotChoiceEl.style.display = 'flex';
+        actionBtn.style.display = 'none';
       }
-    } else {
-      actionBtn.textContent = '装备';
-      actionBtn.className = 'btn equip-detail-action-btn';
-      if (!Inventory.canEquip(currentCharacter, eq)) {
-        actionBtn.disabled = true;
-        actionBtn.style.opacity = '0.4';
-        actionBtn.style.cursor = 'not-allowed';
-      } else {
+    }
+
+    // Action button (hidden when slot choice is shown)
+    if (actionBtn.style.display !== 'none') {
+      if (source === 'equipment') {
+        actionBtn.textContent = '卸下';
+        actionBtn.className = 'btn equip-detail-action-btn danger';
         actionBtn.disabled = false;
         actionBtn.style.opacity = '1';
         actionBtn.style.cursor = 'pointer';
+      } else if (source === 'shop') {
+        actionBtn.textContent = '购买';
+        actionBtn.className = 'btn equip-detail-action-btn';
+        const buyPrice = Math.floor(eq.sellPrice * 3);
+        if (currentCharacter.gold < buyPrice) {
+          actionBtn.disabled = true;
+          actionBtn.style.opacity = '0.4';
+          actionBtn.style.cursor = 'not-allowed';
+        } else {
+          actionBtn.disabled = false;
+          actionBtn.style.opacity = '1';
+          actionBtn.style.cursor = 'pointer';
+        }
+      } else {
+        actionBtn.textContent = '装备';
+        actionBtn.className = 'btn equip-detail-action-btn';
+        if (!Inventory.canEquip(currentCharacter, eq)) {
+          actionBtn.disabled = true;
+          actionBtn.style.opacity = '0.4';
+          actionBtn.style.cursor = 'not-allowed';
+        } else {
+          actionBtn.disabled = false;
+          actionBtn.style.opacity = '1';
+          actionBtn.style.cursor = 'pointer';
+        }
       }
     }
 
@@ -647,6 +671,8 @@
 
   function closeEquipDetail() {
     document.getElementById('equip-detail-modal').style.display = 'none';
+    document.getElementById('equip-detail-slot-choice').style.display = 'none';
+    document.getElementById('equip-detail-btn-action').style.display = '';
     equipDetailSource = null;
     equipDetailItemName = null;
   }
@@ -692,9 +718,45 @@
         closeEquipDetail();
         renderEquipment();
         updateGameUI();
+      } else if (result.needSlotChoice) {
+        // Show slot choice (should already be showing, but ensure)
+        showEquipDetail(equipDetailItemName, 'inventory');
       } else {
         showToast(result.error);
       }
+    }
+  });
+
+  // Slot choice buttons in equip detail modal
+  document.getElementById('equip-detail-btn-slot1').addEventListener('click', () => {
+    if (equipDetailSource !== 'slotChoice' || !equipDetailItemName) return;
+    const eq = Inventory.findEquipment(equipDetailItemName);
+    const slotKey = eq.slot === 'bracelets' ? 'bracelet1' : 'ring1';
+    const result = Inventory.equip(currentCharacter, equipDetailItemName, slotKey);
+    if (result.success) {
+      showToast(`装备了 ${equipDetailItemName}`);
+      selectedInventoryItem = null;
+      closeEquipDetail();
+      renderEquipment();
+      updateGameUI();
+    } else {
+      showToast(result.error);
+    }
+  });
+
+  document.getElementById('equip-detail-btn-slot2').addEventListener('click', () => {
+    if (equipDetailSource !== 'slotChoice' || !equipDetailItemName) return;
+    const eq = Inventory.findEquipment(equipDetailItemName);
+    const slotKey = eq.slot === 'bracelets' ? 'bracelet2' : 'ring2';
+    const result = Inventory.equip(currentCharacter, equipDetailItemName, slotKey);
+    if (result.success) {
+      showToast(`装备了 ${equipDetailItemName}`);
+      selectedInventoryItem = null;
+      closeEquipDetail();
+      renderEquipment();
+      updateGameUI();
+    } else {
+      showToast(result.error);
     }
   });
 
@@ -1096,6 +1158,8 @@
       refreshInventoryModal();
       renderEquipment();
       updateGameUI();
+    } else if (result.needSlotChoice) {
+      showEquipDetail(selectedInventoryItem, 'inventory');
     } else {
       showToast(result.error);
     }

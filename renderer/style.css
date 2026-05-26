@@ -783,6 +783,17 @@ body {
   color: #fff;
 }
 
+.slot-choice-buttons {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+}
+
+.slot-choice-buttons .btn {
+  flex: 1;
+  font-size: 11px;
+}
+
 /* Make inventory items show hover cursor for detail */
 .inv-item.equippable { cursor: pointer; }
 

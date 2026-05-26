@@ -27,8 +27,8 @@ var Inventory = {
     return true;
   },
 
-  // Equip an item from inventory
-  equip(character, itemName) {
+  // Equip an item from inventory. targetSlotKey allows choosing which slot to replace.
+  equip(character, itemName, targetSlotKey = null) {
     const invItem = character.inventory.find(i => i.name === itemName);
     if (!invItem) return { success: false, error: '背包中没有此物品' };
 
@@ -39,9 +39,7 @@ var Inventory = {
       return { success: false, error: '等级不足或职业不符，无法装备此物品' };
     }
 
-    // Swap equipment
     const slot = this.getEquipmentSlot(itemName);
-    const slotKey = eq.slot; // 'weapons', 'armors', etc. maps to slot key
 
     // Map data slot names to character equipment keys
     const slotMap = {
@@ -53,23 +51,28 @@ var Inventory = {
       'rings': 'ring1'
     };
 
-    // For bracelets and rings, find first empty slot or swap with first
+    // For bracelets and rings, respect targetSlotKey or auto-pick
     if (slot === 'bracelets') {
-      if (character.equipment.bracelet1 && character.equipment.bracelet2) {
-        // Both occupied, swap with bracelet1
+      if (targetSlotKey && ['bracelet1', 'bracelet2'].includes(targetSlotKey)) {
+        return this._swapEquip(character, itemName, targetSlotKey);
+      }
+      if (!character.equipment.bracelet1) {
         return this._swapEquip(character, itemName, 'bracelet1');
-      } else if (character.equipment.bracelet1) {
+      } else if (!character.equipment.bracelet2) {
         return this._swapEquip(character, itemName, 'bracelet2');
       } else {
-        return this._swapEquip(character, itemName, 'bracelet1');
+        return { needSlotChoice: true, slot: 'bracelets', options: ['bracelet1', 'bracelet2'] };
       }
     } else if (slot === 'rings') {
-      if (character.equipment.ring1 && character.equipment.ring2) {
+      if (targetSlotKey && ['ring1', 'ring2'].includes(targetSlotKey)) {
+        return this._swapEquip(character, itemName, targetSlotKey);
+      }
+      if (!character.equipment.ring1) {
         return this._swapEquip(character, itemName, 'ring1');
-      } else if (character.equipment.ring1) {
+      } else if (!character.equipment.ring2) {
         return this._swapEquip(character, itemName, 'ring2');
       } else {
-        return this._swapEquip(character, itemName, 'ring1');
+        return { needSlotChoice: true, slot: 'rings', options: ['ring1', 'ring2'] };
       }
     }
 
