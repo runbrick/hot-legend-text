@@ -7,6 +7,7 @@
   let selectedInventoryItem = null;
   let selectedShopItem = null;
   let shopBuyQty = 1;
+  let invSellQty = 1;
   let equipDetailSource = null; // 'equipment' | 'inventory'
   let equipDetailItemName = null;
 
@@ -771,6 +772,9 @@
     const body = document.getElementById('inventory-modal-body');
     const ch = currentCharacter;
     selectedInventoryItem = null;
+    invSellQty = 1;
+    const qtyInput = document.getElementById('inv-sell-qty');
+    if (qtyInput) qtyInput.value = 1;
 
     if (!ch.inventory.length) {
       body.innerHTML = '<span style="color:#555;text-align:center;display:block;padding:20px;">背包为空</span>';
@@ -1023,15 +1027,22 @@
 
   document.getElementById('btn-inv-sell').addEventListener('click', () => {
     if (!selectedInventoryItem) { showToast('请先在背包中点击选择物品'); return; }
+    const qtyInput = document.getElementById('inv-sell-qty');
+    invSellQty = Math.max(1, Math.min(999, parseInt(qtyInput.value) || 1));
+    const invItem = currentCharacter.inventory.find(i => i.name === selectedInventoryItem);
+    const actualQty = Math.min(invSellQty, invItem ? invItem.quantity : 1);
     const eq = Inventory.findEquipment(selectedInventoryItem);
     const potion = window.gameData.items.potions.find(p => p.name === selectedInventoryItem);
-    const price = eq ? eq.sellPrice : potion ? potion.sellPrice : 1;
-    if (confirm(`确定出售 ${selectedInventoryItem}？售价: ${price} 金币`)) {
-      Inventory.sell(currentCharacter, selectedInventoryItem);
+    const unitPrice = eq ? eq.sellPrice : potion ? potion.sellPrice : 1;
+    const totalPrice = unitPrice * actualQty;
+    if (confirm(`确定出售 ${selectedInventoryItem} x${actualQty}？总售价: ${totalPrice} 金币`)) {
+      Inventory.sell(currentCharacter, selectedInventoryItem, actualQty);
       selectedInventoryItem = null;
+      invSellQty = 1;
+      if (qtyInput) qtyInput.value = 1;
       refreshInventoryModal();
       updateGameUI();
-      showToast('出售成功');
+      showToast(`出售成功，获得 ${totalPrice} 金币`);
     }
   });
 

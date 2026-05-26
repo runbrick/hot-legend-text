@@ -126,22 +126,23 @@ var Inventory = {
   },
 
   // Sell item from inventory
-  sell(character, itemName) {
+  sell(character, itemName, quantity = 1) {
     const invItem = character.inventory.find(i => i.name === itemName);
     if (!invItem) return { success: false, error: '背包中没有此物品' };
+    const qty = Math.min(quantity, invItem.quantity);
 
     const eq = this.findEquipment(itemName);
+    let unitPrice = 1;
     if (eq) {
-      character.gold += eq.sellPrice;
+      unitPrice = eq.sellPrice;
     } else {
       const potionData = window.gameData?.items?.potions?.find(p => p.name === itemName);
       if (potionData) {
-        character.gold += potionData.sellPrice;
-      } else {
-        character.gold += 1; // Default sell price
+        unitPrice = potionData.sellPrice;
       }
     }
-    character.removeItem(itemName, 1);
+    character.gold += unitPrice * qty;
+    character.removeItem(itemName, qty);
     return { success: true };
   },
 
