@@ -52,6 +52,12 @@
           <div class="panel-title">装备</div>
           <div id="equipment-display" class="equipment-display"></div>
         </div>
+
+        <!-- Auto Potion Settings -->
+        <div class="panel auto-potion-panel">
+          <div class="panel-title">自动喝药</div>
+          <div id="auto-potion-settings" class="auto-potion-settings"></div>
+        </div>
       </div>
 
       <!-- Center Panel: Combat Log -->
@@ -82,6 +88,13 @@
         </div>
 
       </div>
+    </div>
+
+    <!-- Quick Use Bar -->
+    <div class="quick-bar" id="quick-bar">
+      <span class="quick-bar-label">快捷</span>
+      <div class="quick-slots" id="quick-slots"></div>
+      <button id="btn-quickbar-config" class="btn btn-small">设置</button>
     </div>
 
     <!-- Bottom Bar -->
@@ -115,6 +128,7 @@
       <div class="modal-title">背包</div>
       <div class="modal-body" id="inventory-modal-body"></div>
       <div class="modal-actions">
+        <button id="btn-inv-use" class="btn btn-small">使用</button>
         <button id="btn-inv-equip" class="btn btn-small">装备</button>
         <button id="btn-inv-sell" class="btn btn-small">出售</button>
         <button id="btn-inv-discard" class="btn btn-small">丢弃</button>
@@ -134,6 +148,18 @@
           数量 <input type="number" id="shop-modal-qty" class="shop-qty" value="1" min="1" max="99">
           <button id="btn-buy-modal" class="btn">购买</button>
         </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Bar Config Modal -->
+  <div id="quickbar-config-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-title">快捷栏设置</div>
+      <div class="modal-body" id="quickbar-config-body"></div>
+      <div class="modal-actions">
+        <button id="btn-quickbar-save" class="btn">保存</button>
+        <button id="btn-quickbar-close" class="btn">关闭</button>
       </div>
     </div>
   </div>

@@ -275,12 +275,14 @@ var GameEngine = {
   },
 
   autoPotion(ch) {
+    const cfg = ch.autoPotionConfig;
+    if (!cfg.enabled) return;
     const hpPercent = ch.hp / ch.maxHp;
     const mpPercent = ch.mp / ch.maxMp;
-    if (hpPercent < 0.5) {
+    if (hpPercent < cfg.hpThreshold) {
       this.useBestPotion(ch, ['金创药(小)', '金创药(中)', '金创药(大)'], 'hp');
     }
-    if (mpPercent < 0.3) {
+    if (mpPercent < cfg.mpThreshold) {
       this.useBestPotion(ch, ['魔法药(小)', '魔法药(中)', '魔法药(大)'], 'mp');
     }
   },
@@ -298,6 +300,39 @@ var GameEngine = {
         }
       }
     }
+  },
+
+  usePotion(ch, potionName) {
+    const count = ch.getItemCount(potionName);
+    if (count <= 0) return { success: false, error: '背包中没有此物品' };
+
+    const potionData = window.gameData?.items?.potions?.find(p => p.name === potionName);
+    if (!potionData) return { success: false, error: '此物品不是药品' };
+
+    // Handle scroll (回城卷)
+    if (potionData.type === 'scroll' && potionData.effect.teleport) {
+      const dungeon = this.getCurrentDungeon();
+      const cityId = dungeon ? dungeon.cityId : 'bichon_city';
+      const city = this.citiesData.find(c => c.id === cityId);
+      ch.removeItem(potionName, 1);
+      ch.currentMapId = cityId;
+      this.currentMonster = null;
+      this.addLog('system', `使用回城卷，传送至 ${city ? city.name : '比奇城'}`);
+      if (this.callbacks.onUpdate) this.callbacks.onUpdate();
+      return { success: true };
+    }
+
+    // Apply potion effects
+    ch.removeItem(potionName, 1);
+    if (potionData.effect.hp) {
+      ch.hp = Math.min(ch.maxHp, ch.hp + potionData.effect.hp);
+    }
+    if (potionData.effect.mp) {
+      ch.mp = Math.min(ch.maxMp, ch.mp + potionData.effect.mp);
+    }
+    this.addLog('system', `使用 ${potionName}`);
+    if (this.callbacks.onUpdate) this.callbacks.onUpdate();
+    return { success: true };
   },
 
   // Travel to a city

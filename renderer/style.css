@@ -786,6 +786,138 @@ body {
 /* Make inventory items show hover cursor for detail */
 .inv-item.equippable { cursor: pointer; }
 
+/* Auto Potion Settings */
+.auto-potion-settings {
+  font-size: 12px;
+}
+
+.auto-potion-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+  border-bottom: 1px dotted #2a1e0e;
+}
+
+.auto-potion-row label {
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.auto-potion-row select {
+  background: var(--bg-dark);
+  border: 1px solid var(--border-gold);
+  color: var(--text-yellow);
+  font-size: 11px;
+  font-family: inherit;
+  padding: 2px 4px;
+  width: 70px;
+  cursor: pointer;
+}
+
+.auto-potion-row select:focus {
+  border-color: var(--border-light);
+  outline: none;
+}
+
+.auto-potion-row input[type="checkbox"] {
+  accent-color: var(--border-gold);
+  cursor: pointer;
+}
+
+/* Quick Use Bar */
+.quick-bar {
+  background: #1a0e04;
+  border-top: 1px solid var(--border-gold);
+  border-bottom: 1px solid var(--border-gold);
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.quick-bar-label {
+  color: var(--text-gold);
+  font-size: 12px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.quick-slots {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+}
+
+.quick-slot {
+  flex: 1;
+  max-width: 120px;
+  border: 1px solid var(--border-gold);
+  background: var(--bg-panel);
+  padding: 4px 8px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text-gold);
+  transition: all 0.15s;
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.quick-slot:hover {
+  border-color: var(--border-light);
+  background: #231808;
+}
+
+.quick-slot.empty {
+  color: #443322;
+  cursor: default;
+}
+
+.quick-slot .quick-slot-count {
+  position: absolute;
+  top: 1px;
+  right: 4px;
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+/* Quick Bar Config Modal */
+#quickbar-config-body .config-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px dotted #2a1e0e;
+}
+
+#quickbar-config-body .config-row .config-label {
+  color: var(--text-gold);
+  font-size: 12px;
+  width: 50px;
+  flex-shrink: 0;
+}
+
+#quickbar-config-body .config-row select {
+  flex: 1;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-gold);
+  color: var(--text-yellow);
+  font-size: 12px;
+  font-family: inherit;
+  padding: 4px 6px;
+  cursor: pointer;
+}
+
+#quickbar-config-body .config-row select:focus {
+  border-color: var(--border-light);
+  outline: none;
+}
+
 /* Toast */
 .toast {
   position: fixed;

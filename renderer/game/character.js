@@ -35,6 +35,8 @@ class Character {
     this.skills = []; // { name, level: 0-3, exp }
     this.inventory = []; // [{ name, quantity, type }]
     this.currentMapId = 'bichon_wild';
+    this.autoPotionConfig = { hpThreshold: 0.5, mpThreshold: 0.3, enabled: true };
+    this.quickSlots = [null, null, null, null, null];
   }
 
   create(name, className, classData) {
@@ -54,6 +56,8 @@ class Character {
     this.equipment = { ...classData.startingEquipment };
     this.skills = [];
     this.inventory = [];
+    this.autoPotionConfig = { hpThreshold: 0.5, mpThreshold: 0.3, enabled: true };
+    this.quickSlots = [null, null, null, null, null];
 
     // Add starting items
     for (const item of classData.startingItems) {
@@ -237,7 +241,9 @@ class Character {
       equipment: { ...this.equipment },
       skills: this.skills.map(s => ({ ...s })),
       inventory: this.inventory.map(i => ({ ...i })),
-      currentMapId: this.currentMapId
+      currentMapId: this.currentMapId,
+      autoPotionConfig: { ...this.autoPotionConfig },
+      quickSlots: [...this.quickSlots]
     };
   }
 
@@ -260,6 +266,8 @@ class Character {
     this.skills = (data.skills || []).map(s => ({ ...s }));
     this.inventory = (data.inventory || []).map(i => ({ ...i }));
     this.currentMapId = data.currentMapId || 'bichon_wild';
+    this.autoPotionConfig = data.autoPotionConfig || { hpThreshold: 0.5, mpThreshold: 0.3, enabled: true };
+    this.quickSlots = data.quickSlots || [null, null, null, null, null];
   }
 }
 

@@ -20,6 +20,10 @@
   const goldTextEl = document.getElementById('gold-text');
   const gameStatusEl = document.getElementById('game-status');
 
+  function isPotion(name) {
+    return window.gameData?.items?.potions?.some(p => p.name === name);
+  }
+
   // ========== Toast ==========
   let toastTimer = null;
   function showToast(msg) {
@@ -180,6 +184,8 @@
     renderEquipment();
     renderSkills();
     renderAllocateButtons();
+    renderAutoPotionSettings();
+    renderQuickBar();
     renderNavigation();
     renderShop();
 
@@ -279,6 +285,7 @@
     renderNavigation();
     renderShop();
     renderSkills();
+    renderQuickBar();
     // Update inventory button count
     const invBtn = document.getElementById('btn-inventory');
     if (invBtn) {
@@ -843,6 +850,108 @@
     }
   }
 
+  function renderAutoPotionSettings() {
+    const cfg = currentCharacter.autoPotionConfig;
+    const el = document.getElementById('auto-potion-settings');
+    if (!el) return;
+    const thresholds = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8];
+    const labels = ['30%', '40%', '50%', '60%', '70%', '80%'];
+
+    let html = '';
+    html += '<div class="auto-potion-row"><label>启用</label>';
+    html += `<input type="checkbox" id="auto-potion-enabled" ${cfg.enabled ? 'checked' : ''}></div>`;
+
+    html += '<div class="auto-potion-row"><label>HP低于</label><select id="auto-potion-hp">';
+    for (let i = 0; i < thresholds.length; i++) {
+      html += `<option value="${thresholds[i]}" ${cfg.hpThreshold === thresholds[i] ? 'selected' : ''}>${labels[i]}</option>`;
+    }
+    html += '</select></div>';
+
+    html += '<div class="auto-potion-row"><label>MP低于</label><select id="auto-potion-mp">';
+    for (let i = 0; i < thresholds.length; i++) {
+      html += `<option value="${thresholds[i]}" ${cfg.mpThreshold === thresholds[i] ? 'selected' : ''}>${labels[i]}</option>`;
+    }
+    html += '</select></div>';
+
+    el.innerHTML = html;
+
+    document.getElementById('auto-potion-enabled').addEventListener('change', (e) => {
+      currentCharacter.autoPotionConfig.enabled = e.target.checked;
+    });
+    document.getElementById('auto-potion-hp').addEventListener('change', (e) => {
+      currentCharacter.autoPotionConfig.hpThreshold = parseFloat(e.target.value);
+    });
+    document.getElementById('auto-potion-mp').addEventListener('change', (e) => {
+      currentCharacter.autoPotionConfig.mpThreshold = parseFloat(e.target.value);
+    });
+  }
+
+  function renderQuickBar() {
+    const ch = currentCharacter;
+    const slotsEl = document.getElementById('quick-slots');
+    if (!slotsEl) return;
+    let html = '';
+    for (let i = 0; i < ch.quickSlots.length; i++) {
+      const potionName = ch.quickSlots[i];
+      const count = potionName ? ch.getItemCount(potionName) : 0;
+      if (potionName && count > 0) {
+        html += `<div class="quick-slot" data-slot="${i}" data-potion="${encodeURIComponent(potionName)}" title="${potionName} (x${count})">${potionName}<span class="quick-slot-count">x${count}</span></div>`;
+      } else {
+        // Auto-clear depleted slots
+        if (potionName && count <= 0) {
+          ch.quickSlots[i] = null;
+        }
+        html += `<div class="quick-slot empty" data-slot="${i}">空</div>`;
+      }
+    }
+    slotsEl.innerHTML = html;
+
+    slotsEl.querySelectorAll('.quick-slot:not(.empty)').forEach(slot => {
+      slot.addEventListener('click', () => {
+        const name = decodeURIComponent(slot.dataset.potion);
+        const result = GameEngine.usePotion(currentCharacter, name);
+        if (result.success) {
+          showToast(`使用 ${name}`);
+          renderQuickBar();
+          updateGameUI();
+        } else {
+          showToast(result.error);
+        }
+      });
+      slot.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        currentCharacter.quickSlots[parseInt(slot.dataset.slot)] = null;
+        renderQuickBar();
+        showToast('已清除快捷栏位');
+      });
+    });
+  }
+
+  function openQuickBarConfig() {
+    const modal = document.getElementById('quickbar-config-modal');
+    const body = document.getElementById('quickbar-config-body');
+    const ch = currentCharacter;
+
+    const potionNames = [...new Set(
+      ch.inventory.filter(item => isPotion(item.name)).map(item => item.name)
+    )];
+
+    let html = '';
+    for (let i = 0; i < 5; i++) {
+      const current = ch.quickSlots[i] || '';
+      html += `<div class="config-row">
+        <span class="config-label">槽位${i + 1}</span>
+        <select class="quickbar-config-select" data-slot="${i}">
+          <option value="">-- 空 --</option>`;
+      for (const name of potionNames) {
+        html += `<option value="${name}" ${current === name ? 'selected' : ''}>${name}</option>`;
+      }
+      html += '</select></div>';
+    }
+    body.innerHTML = html;
+    modal.style.display = 'flex';
+  }
+
   function appendLog(type, text) {
     const div = document.createElement('div');
     div.className = 'log-' + type;
@@ -881,6 +990,21 @@
   document.getElementById('btn-inv-close').addEventListener('click', closeInventoryModal);
   document.getElementById('inventory-modal').addEventListener('click', (e) => {
     if (e.target.id === 'inventory-modal') closeInventoryModal();
+  });
+
+  document.getElementById('btn-inv-use').addEventListener('click', () => {
+    if (!selectedInventoryItem) { showToast('请先在背包中点击选择物品'); return; }
+    if (!isPotion(selectedInventoryItem)) { showToast('此物品无法使用'); return; }
+    const result = GameEngine.usePotion(currentCharacter, selectedInventoryItem);
+    if (result.success) {
+      showToast(`使用 ${selectedInventoryItem}`);
+      selectedInventoryItem = null;
+      refreshInventoryModal();
+      renderQuickBar();
+      updateGameUI();
+    } else {
+      showToast(result.error);
+    }
   });
 
   document.getElementById('btn-inv-equip').addEventListener('click', () => {
@@ -922,9 +1046,51 @@
     }
   });
 
+  // Quick bar config modal
+  document.getElementById('btn-quickbar-config').addEventListener('click', () => {
+    openQuickBarConfig();
+  });
+
+  document.getElementById('btn-quickbar-save').addEventListener('click', () => {
+    const selects = document.querySelectorAll('#quickbar-config-body .quickbar-config-select');
+    selects.forEach(sel => {
+      currentCharacter.quickSlots[parseInt(sel.dataset.slot)] = sel.value || null;
+    });
+    document.getElementById('quickbar-config-modal').style.display = 'none';
+    renderQuickBar();
+    showToast('快捷栏已保存');
+  });
+
+  document.getElementById('btn-quickbar-close').addEventListener('click', () => {
+    document.getElementById('quickbar-config-modal').style.display = 'none';
+  });
+
+  document.getElementById('quickbar-config-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'quickbar-config-modal') {
+      document.getElementById('quickbar-config-modal').style.display = 'none';
+    }
+  });
+
   // ========== Keyboard shortcuts ==========
   document.addEventListener('keydown', (e) => {
     if (!currentCharacter) return;
+    // Quick slot keys 1-5
+    if (['1', '2', '3', '4', '5'].includes(e.key)) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+      const slotIndex = parseInt(e.key) - 1;
+      const potionName = currentCharacter.quickSlots[slotIndex];
+      if (potionName && currentCharacter.getItemCount(potionName) > 0) {
+        const result = GameEngine.usePotion(currentCharacter, potionName);
+        if (result.success) {
+          showToast(`使用 ${potionName}`);
+          renderQuickBar();
+          updateGameUI();
+        } else {
+          showToast(result.error);
+        }
+      }
+      return;
+    }
     switch (e.key.toLowerCase()) {
       case 's':
         if (e.ctrlKey) { e.preventDefault(); autoSave(); showToast('已保存 (Ctrl+S)'); }
