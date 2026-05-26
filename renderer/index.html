@@ -136,10 +136,7 @@
       <div class="modal-actions">
         <button id="btn-inv-use" class="btn btn-small">使用</button>
         <button id="btn-inv-equip" class="btn btn-small">装备</button>
-        <span class="shop-buy-row-modal">
-          数量 <input type="number" id="inv-sell-qty" class="shop-qty" value="1" min="1" max="999">
-          <button id="btn-inv-sell" class="btn btn-small">出售</button>
-        </span>
+        <button id="btn-inv-sell" class="btn btn-small">出售</button>
         <button id="btn-inv-discard" class="btn btn-small">丢弃</button>
         <button id="btn-inv-close" class="btn btn-small">关闭</button>
       </div>
@@ -169,6 +166,19 @@
       <div class="modal-actions">
         <button id="btn-quickbar-save" class="btn">保存</button>
         <button id="btn-quickbar-close" class="btn">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch Sell Modal -->
+  <div id="sell-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box sell-modal-box">
+      <div class="modal-title">批量出售</div>
+      <div class="modal-body" id="sell-modal-body"></div>
+      <div class="modal-actions">
+        <div id="sell-total" class="sell-total">合计: 0 金币</div>
+        <button id="btn-sell-execute" class="btn">确认出售</button>
+        <button id="btn-sell-close" class="btn">关闭</button>
       </div>
     </div>
   </div>

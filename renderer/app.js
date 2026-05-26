@@ -7,7 +7,6 @@
   let selectedInventoryItem = null;
   let selectedShopItem = null;
   let shopBuyQty = 1;
-  let invSellQty = 1;
   let equipDetailSource = null; // 'equipment' | 'inventory'
   let equipDetailItemName = null;
 
@@ -773,9 +772,6 @@
     const body = document.getElementById('inventory-modal-body');
     const ch = currentCharacter;
     selectedInventoryItem = null;
-    invSellQty = 1;
-    const qtyInput = document.getElementById('inv-sell-qty');
-    if (qtyInput) qtyInput.value = 1;
 
     if (!ch.inventory.length) {
       body.innerHTML = '<span style="color:#555;text-align:center;display:block;padding:20px;">背包为空</span>';
@@ -1106,23 +1102,143 @@
   });
 
   document.getElementById('btn-inv-sell').addEventListener('click', () => {
-    if (!selectedInventoryItem) { showToast('请先在背包中点击选择物品'); return; }
-    const qtyInput = document.getElementById('inv-sell-qty');
-    invSellQty = Math.max(1, Math.min(999, parseInt(qtyInput.value) || 1));
-    const invItem = currentCharacter.inventory.find(i => i.name === selectedInventoryItem);
-    const actualQty = Math.min(invSellQty, invItem ? invItem.quantity : 1);
-    const eq = Inventory.findEquipment(selectedInventoryItem);
-    const potion = window.gameData.items.potions.find(p => p.name === selectedInventoryItem);
-    const unitPrice = eq ? eq.sellPrice : potion ? potion.sellPrice : 1;
-    const totalPrice = unitPrice * actualQty;
-    if (confirm(`确定出售 ${selectedInventoryItem} x${actualQty}？总售价: ${totalPrice} 金币`)) {
-      Inventory.sell(currentCharacter, selectedInventoryItem, actualQty);
-      selectedInventoryItem = null;
-      invSellQty = 1;
-      if (qtyInput) qtyInput.value = 1;
+    openSellModal();
+  });
+
+  // ========== Batch Sell Modal ==========
+  function getItemSellPrice(name) {
+    const eq = Inventory.findEquipment(name);
+    if (eq) return eq.sellPrice;
+    const potion = window.gameData.items.potions.find(p => p.name === name);
+    if (potion) return potion.sellPrice;
+    return 1;
+  }
+
+  function openSellModal() {
+    const ch = currentCharacter;
+    const modal = document.getElementById('sell-modal');
+    const body = document.getElementById('sell-modal-body');
+    if (!ch.inventory.length) {
+      body.innerHTML = '<span class="sell-empty">背包为空</span>';
+    } else {
+      let html = `<div class="sell-header">
+        <label><input type="checkbox" id="sell-select-all"> 全选</label>
+      </div>`;
+      for (const item of ch.inventory) {
+        const price = getItemSellPrice(item.name);
+        html += `<div class="sell-row" data-name="${encodeURIComponent(item.name)}">
+          <input type="checkbox" class="sell-check" data-name="${encodeURIComponent(item.name)}">
+          <span class="sell-name" title="${item.name}">${item.name}</span>
+          <span class="sell-owned">x${item.quantity}</span>
+          <span class="sell-price">${price}金</span>
+          <input type="number" class="sell-qty" value="1" min="1" max="${item.quantity}" data-max="${item.quantity}">
+          <button class="btn-sell-all" data-max="${item.quantity}">全部</button>
+          <span class="sell-subtotal" data-unit="${price}">0</span>
+        </div>`;
+      }
+      body.innerHTML = html;
+
+      // Select all checkbox
+      document.getElementById('sell-select-all').addEventListener('change', (e) => {
+        body.querySelectorAll('.sell-check').forEach(cb => { cb.checked = e.target.checked; });
+        updateSellTotal();
+      });
+
+      // Row checkboxes
+      body.querySelectorAll('.sell-check').forEach(cb => {
+        cb.addEventListener('change', () => updateSellTotal());
+      });
+
+      // Quantity inputs
+      body.querySelectorAll('.sell-qty').forEach(input => {
+        input.addEventListener('input', () => {
+          const max = parseInt(input.dataset.max);
+          let val = parseInt(input.value) || 0;
+          if (val < 0) val = 0;
+          if (val > max) val = max;
+          input.value = val;
+          updateSellRowSubtotal(input);
+          updateSellTotal();
+        });
+      });
+
+      // "全部" buttons
+      body.querySelectorAll('.btn-sell-all').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const row = btn.closest('.sell-row');
+          const qtyInput = row.querySelector('.sell-qty');
+          qtyInput.value = btn.dataset.max;
+          updateSellRowSubtotal(qtyInput);
+          updateSellTotal();
+        });
+      });
+    }
+
+    document.getElementById('sell-total').textContent = '合计: 0 金币';
+    modal.style.display = 'flex';
+  }
+
+  function updateSellRowSubtotal(qtyInput) {
+    const row = qtyInput.closest('.sell-row');
+    const subtotalEl = row.querySelector('.sell-subtotal');
+    const unitPrice = parseInt(subtotalEl.dataset.unit);
+    const qty = parseInt(qtyInput.value) || 0;
+    subtotalEl.textContent = (unitPrice * qty) + '金';
+  }
+
+  function updateSellTotal() {
+    const body = document.getElementById('sell-modal-body');
+    let total = 0;
+    body.querySelectorAll('.sell-row').forEach(row => {
+      const cb = row.querySelector('.sell-check');
+      if (!cb.checked) return;
+      const unitPrice = parseInt(row.querySelector('.sell-subtotal').dataset.unit);
+      const qty = parseInt(row.querySelector('.sell-qty').value) || 0;
+      total += unitPrice * qty;
+    });
+    document.getElementById('sell-total').textContent = '合计: ' + total + ' 金币';
+  }
+
+  document.getElementById('btn-sell-execute').addEventListener('click', () => {
+    const body = document.getElementById('sell-modal-body');
+    const ch = currentCharacter;
+    let totalGold = 0;
+    let soldCount = 0;
+
+    body.querySelectorAll('.sell-row').forEach(row => {
+      const cb = row.querySelector('.sell-check');
+      if (!cb.checked) return;
+      const name = decodeURIComponent(cb.dataset.name);
+      const qty = parseInt(row.querySelector('.sell-qty').value) || 0;
+      if (qty <= 0) return;
+      const invItem = ch.inventory.find(i => i.name === name);
+      if (!invItem) return;
+      const actualQty = Math.min(qty, invItem.quantity);
+      const unitPrice = getItemSellPrice(name);
+      ch.gold += unitPrice * actualQty;
+      ch.removeItem(name, actualQty);
+      totalGold += unitPrice * actualQty;
+      soldCount++;
+    });
+
+    if (soldCount > 0) {
+      showToast(`出售成功，获得 ${totalGold} 金币`);
+      document.getElementById('sell-modal').style.display = 'none';
       refreshInventoryModal();
+      renderQuickBar();
       updateGameUI();
-      showToast(`出售成功，获得 ${totalPrice} 金币`);
+    } else {
+      showToast('请勾选要出售的物品');
+    }
+  });
+
+  document.getElementById('btn-sell-close').addEventListener('click', () => {
+    document.getElementById('sell-modal').style.display = 'none';
+  });
+
+  document.getElementById('sell-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'sell-modal') {
+      document.getElementById('sell-modal').style.display = 'none';
     }
   });
 
