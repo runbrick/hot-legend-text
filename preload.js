@@ -9,6 +9,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   deleteCharacter: (id) => ipcRenderer.invoke('delete-character', id),
   getAllCharacters: () => ipcRenderer.invoke('store:getAll'),
 
+  // Hotkey
+  getHotkey: () => ipcRenderer.invoke('get-hotkey'),
+  setHotkey: (accelerator) => ipcRenderer.invoke('set-hotkey', accelerator),
+
   // Quit notification
   onBeforeQuit: (callback) => ipcRenderer.on('before-quit', callback)
 });

@@ -786,6 +786,61 @@ body {
 /* Make inventory items show hover cursor for detail */
 .inv-item.equippable { cursor: pointer; }
 
+/* Hotkey Settings */
+.hotkey-settings {
+  font-size: 12px;
+}
+
+.hotkey-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.hotkey-display .hotkey-current {
+  color: var(--text-yellow);
+  font-weight: bold;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-gold);
+  padding: 3px 8px;
+  font-size: 12px;
+  font-family: monospace;
+}
+
+.hotkey-hint {
+  color: var(--text-dim);
+  font-size: 10px;
+  margin-top: 4px;
+}
+
+.btn-hotkey {
+  padding: 2px 8px;
+  font-size: 11px;
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  color: var(--text-gold);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.btn-hotkey:hover {
+  background: var(--btn-hover);
+  border-color: var(--border-light);
+}
+
+.btn-hotkey.capturing {
+  border-color: #e87040;
+  color: #e87040;
+  animation: pulse 0.8s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 /* Auto Potion Settings */
 .auto-potion-settings {
   font-size: 12px;

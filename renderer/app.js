@@ -186,6 +186,7 @@
     renderSkills();
     renderAllocateButtons();
     renderAutoPotionSettings();
+    renderHotkeySettings();
     renderQuickBar();
     renderNavigation();
     renderShop();
@@ -955,6 +956,85 @@
     body.innerHTML = html;
     modal.style.display = 'flex';
   }
+
+  let capturingHotkey = false;
+
+  async function renderHotkeySettings() {
+    const el = document.getElementById('hotkey-settings');
+    if (!el) return;
+
+    let currentHotkey = 'CommandOrControl+Shift+H';
+    if (window.electronAPI) {
+      try {
+        currentHotkey = await window.electronAPI.getHotkey();
+      } catch (e) { /* use default */ }
+    }
+
+    const display = formatAccelerator(currentHotkey);
+    el.innerHTML = `
+      <div class="hotkey-display">
+        <span class="hotkey-current">${display}</span>
+        <button id="btn-capture-hotkey" class="btn-hotkey">修改</button>
+      </div>
+      <div class="hotkey-hint">隐藏/显示窗口</div>
+    `;
+
+    const btn = document.getElementById('btn-capture-hotkey');
+    btn.addEventListener('click', () => {
+      if (capturingHotkey) return;
+      capturingHotkey = true;
+      btn.textContent = '请按键...';
+      btn.classList.add('capturing');
+    });
+  }
+
+  function formatAccelerator(accel) {
+    return accel
+      .replace(/CommandOrControl/g, 'Ctrl')
+      .replace(/Command/g, 'Cmd')
+      .replace(/Control/g, 'Ctrl')
+      .replace(/Alt/g, 'Alt')
+      .replace(/Shift/g, 'Shift')
+      .replace(/\+/g, ' + ');
+  }
+
+  // Key capture listener for hotkey rebinding
+  document.addEventListener('keydown', async (e) => {
+    if (!capturingHotkey) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    const key = e.key;
+    // Ignore modifier-only presses
+    if (['Control', 'Shift', 'Alt', 'Meta'].includes(key)) return;
+
+    const parts = [];
+    if (e.ctrlKey || e.metaKey) parts.push('CommandOrControl');
+    if (e.altKey) parts.push('Alt');
+    if (e.shiftKey) parts.push('Shift');
+
+    // Normalize key name
+    let keyName = key.toUpperCase();
+    if (keyName === ' ') keyName = 'Space';
+    if (keyName.length === 1 && keyName >= 'A' && keyName <= 'Z') keyName = keyName;
+    parts.push(keyName);
+
+    const accelerator = parts.join('+');
+    capturingHotkey = false;
+
+    if (window.electronAPI) {
+      const result = await window.electronAPI.setHotkey(accelerator);
+      if (result.success) {
+        showToast(`快捷键已设为 ${formatAccelerator(accelerator)}`);
+      } else {
+        showToast(result.error || '快捷键设置失败');
+      }
+    } else {
+      showToast(`快捷键: ${formatAccelerator(accelerator)} (开发模式，仅显示)`);
+    }
+
+    renderHotkeySettings();
+  }, true);
 
   function appendLog(type, text) {
     const div = document.createElement('div');

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray, Menu, ipcMain, nativeImage, dialog } = require('electron');
+const { app, BrowserWindow, Tray, Menu, ipcMain, nativeImage, dialog, globalShortcut } = require('electron');
 const path = require('path');
 const Store = require('electron-store');
 
@@ -22,12 +22,14 @@ app.on('second-instance', () => {
 let mainWindow = null;
 let tray = null;
 let isQuitting = false;
+const HOTKEY_DEFAULT = 'CommandOrControl+Shift+H';
 
 const store = new Store({
   name: 'saves',
   defaults: {
     characters: [],
-    maxSlots: 3
+    maxSlots: 3,
+    hotkey: HOTKEY_DEFAULT
   }
 });
 
@@ -182,9 +184,51 @@ ipcMain.handle('delete-character', (event, characterId) => {
   return { success: true };
 });
 
+function registerMinimizeShortcut(accelerator) {
+  globalShortcut.unregisterAll();
+  try {
+    const ok = globalShortcut.register(accelerator, () => {
+      if (!mainWindow) return;
+      if (mainWindow.isVisible()) {
+        mainWindow.hide();
+      } else {
+        mainWindow.show();
+        mainWindow.focus();
+      }
+    });
+    if (!ok) {
+      console.error('Failed to register global shortcut:', accelerator);
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error('Invalid shortcut accelerator:', accelerator, e.message);
+    return false;
+  }
+}
+
+// IPC: get current hotkey
+ipcMain.handle('get-hotkey', () => {
+  return store.get('hotkey', HOTKEY_DEFAULT);
+});
+
+// IPC: set new hotkey
+ipcMain.handle('set-hotkey', (event, accelerator) => {
+  if (!accelerator || typeof accelerator !== 'string') return { success: false, error: '无效的快捷键' };
+  const ok = registerMinimizeShortcut(accelerator);
+  if (ok) {
+    store.set('hotkey', accelerator);
+    return { success: true };
+  }
+  // Revert to previous on failure
+  registerMinimizeShortcut(store.get('hotkey', HOTKEY_DEFAULT));
+  return { success: false, error: '快捷键注册失败，可能已被其他应用占用' };
+});
+
 app.whenReady().then(() => {
   createWindow();
   createTray();
+  registerMinimizeShortcut(store.get('hotkey', HOTKEY_DEFAULT));
 });
 
 app.on('window-all-closed', () => {
@@ -193,6 +237,7 @@ app.on('window-all-closed', () => {
 
 app.on('before-quit', () => {
   isQuitting = true;
+  globalShortcut.unregisterAll();
 });
 
 app.on('activate', () => {
