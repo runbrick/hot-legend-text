@@ -829,21 +829,42 @@
   }
 
   // ========== Inventory ==========
-  function openInventoryModal() {
+  let invActiveTab = 'equipment';
+
+  function openInventoryModal(tab = null) {
     const modal = document.getElementById('inventory-modal');
     const body = document.getElementById('inventory-modal-body');
     const ch = currentCharacter;
     selectedInventoryItem = null;
 
-    if (!ch.inventory.length) {
-      body.innerHTML = '<span style="color:#555;text-align:center;display:block;padding:20px;">背包为空</span>';
+    if (tab) invActiveTab = tab;
+
+    const equipmentItems = [];
+    const consumableItems = [];
+    for (const item of ch.inventory) {
+      if (Inventory.getEquipmentSlot(item.name)) {
+        equipmentItems.push(item);
+      } else {
+        consumableItems.push(item);
+      }
+    }
+
+    const items = invActiveTab === 'equipment' ? equipmentItems : consumableItems;
+
+    // Render tabs
+    const tabs = modal.querySelectorAll('.inv-tab');
+    tabs.forEach(t => t.classList.remove('active'));
+    const activeTab = modal.querySelector(`.inv-tab[data-tab="${invActiveTab}"]`);
+    if (activeTab) activeTab.classList.add('active');
+
+    if (!items.length) {
+      const label = invActiveTab === 'equipment' ? '装备' : '消耗品';
+      body.innerHTML = `<span style="color:#555;text-align:center;display:block;padding:20px;">暂无${label}</span>`;
     } else {
       let html = '';
-      for (const item of ch.inventory) {
-        const isEquippable = !!Inventory.getEquipmentSlot(item.name);
-        const eqClass = isEquippable ? ' equippable' : '';
-        html += `<div class="inv-item${eqClass}" data-name="${item.name}">
-          <span class="inv-item-name">${item.name}${isEquippable ? ' ★' : ''}</span>
+      for (const item of items) {
+        html += `<div class="inv-item" data-name="${item.name}">
+          <span class="inv-item-name">${item.name}</span>
           <span class="inv-item-qty">x${item.quantity}</span>
         </div>`;
       }
@@ -855,7 +876,6 @@
           body.querySelectorAll('.inv-item').forEach(el => el.classList.remove('selected'));
           item.classList.add('selected');
         });
-        // Double-click to view equipment detail
         item.addEventListener('dblclick', () => {
           const name = item.dataset.name;
           const eq = Inventory.findEquipment(name);
@@ -872,6 +892,7 @@
   function closeInventoryModal() {
     document.getElementById('inventory-modal').style.display = 'none';
     selectedInventoryItem = null;
+    invActiveTab = 'equipment';
   }
 
   function refreshInventoryModal() {
@@ -1132,6 +1153,12 @@
   document.getElementById('btn-inv-close').addEventListener('click', closeInventoryModal);
   document.getElementById('inventory-modal').addEventListener('click', (e) => {
     if (e.target.id === 'inventory-modal') closeInventoryModal();
+  });
+
+  document.querySelectorAll('#inventory-modal .inv-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      openInventoryModal(tab.dataset.tab);
+    });
   });
 
   document.getElementById('btn-inv-use').addEventListener('click', () => {

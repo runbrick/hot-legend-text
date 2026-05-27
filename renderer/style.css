@@ -627,7 +627,33 @@ body {
 
 .inv-item .inv-item-qty { color: var(--text-dim); font-size: 11px; }
 
-.inv-item.equippable .inv-item-name { color: #e8a020; }
+/* Inventory Tabs */
+.inv-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 8px;
+  border-bottom: 2px solid var(--border-gold);
+}
+
+.inv-tab {
+  padding: 6px 20px;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.15s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+
+.inv-tab:hover { color: var(--text-gold); }
+
+.inv-tab.active {
+  color: var(--text-yellow);
+  border-bottom-color: var(--text-yellow);
+}
 
 .count { color: var(--text-dim); font-size: 11px; }
 
