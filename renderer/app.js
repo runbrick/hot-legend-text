@@ -434,9 +434,10 @@
     let html = '';
     for (const itemName of npcData.sells) {
       const potion = window.gameData.items.potions.find(p => p.name === itemName);
-      const equipment = findEquipmentByName(itemName);
+      const equipment = Inventory.findEquipment(itemName);
+      const slotNames = { weapons: '武器', armors: '衣服', helmets: '头盔', necklaces: '项链', bracelets: '手镯', rings: '戒指' };
       const price = potion ? potion.buyPrice : equipment ? Math.floor(equipment.sellPrice * 3) : 0;
-      const desc = potion ? potion.description : equipment ? `${equipment.slot} | Lv${equipment.level}+` : '';
+      const desc = potion ? potion.description : equipment ? `${slotNames[equipment.slot] || equipment.slot} | Lv${equipment.level}+` : '';
       html += `<div class="modal-shop-item" data-item="${itemName}" data-price="${price}">
         <span class="shop-item-left">
           <span class="shop-item-name">${itemName}</span>
@@ -458,7 +459,7 @@
       });
       // Double-click to view equipment detail
       item.addEventListener('dblclick', () => {
-        const eq = findEquipmentByName(item.dataset.item);
+        const eq = Inventory.findEquipment(item.dataset.item);
         if (eq) {
           showEquipDetail(item.dataset.item, 'shop');
         }
