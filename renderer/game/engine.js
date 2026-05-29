@@ -10,6 +10,10 @@ var GameEngine = {
   maxCombatLog: 100,
   isRunning: false,
   currentMonster: null,
+  currentMonsterHp: 0,
+  currentMonsterMaxHp: 0,
+  lastSkillUsed: null,
+  lastSkillUsedTick: 0,
   callbacks: null,
 
   init(character, callbacks) {
@@ -20,6 +24,10 @@ var GameEngine = {
     this.callbacks = callbacks || {};
     this.combatLog = [];
     this.currentMonster = null;
+    this.currentMonsterHp = 0;
+    this.currentMonsterMaxHp = 0;
+    this.lastSkillUsed = null;
+    this.lastSkillUsedTick = 0;
   },
 
   start() {
@@ -62,8 +70,16 @@ var GameEngine = {
     const ch = this.character;
     if (!ch) return;
 
+    // Decrement skill cooldowns every tick
+    ch.decrementSkillCooldowns();
+
     // In city: no combat, just regen
     if (this.isInCity()) {
+      this.currentMonster = null;
+      this.currentMonsterHp = 0;
+      this.currentMonsterMaxHp = 0;
+      this.lastSkillUsed = null;
+      this.lastSkillUsedTick = 0;
       if (ch.hp < ch.maxHp) {
         ch.hp = Math.min(ch.maxHp, ch.hp + Math.floor(ch.maxHp * 0.05));
       }
@@ -86,9 +102,22 @@ var GameEngine = {
       return;
     }
 
-    const monster = this.getCurrentMonster(dungeon);
-    if (!monster) {
-      this.retreatToTown('该地图没有可挑战的怪物');
+    // Spawn new monster if none or previous died
+    if (!this.currentMonster || this.currentMonsterHp <= 0) {
+      const monster = this.getCurrentMonster(dungeon);
+      if (!monster) {
+        this.retreatToTown('该地图没有可挑战的怪物');
+        return;
+      }
+      this.currentMonster = monster;
+      const hpMult = monster.isBoss ? 6 : 4;
+      this.currentMonsterHp = monster.hp * hpMult;
+      this.currentMonsterMaxHp = monster.hp * hpMult;
+      this.lastSkillUsed = null;
+      this.lastSkillUsedTick = 0;
+      // Show full HP bar for one tick before combat starts
+      this.addLog('combat', `遭遇 ${monster.name}（Lv.${monster.level}）`);
+      this.callbacks.onUpdate();
       return;
     }
 
@@ -97,9 +126,23 @@ var GameEngine = {
       return;
     }
 
-    this.currentMonster = monster;
+    // Try to auto-cast a skill
+    const castSkill = ch.getCastableSkill();
+    let skillEffect = null;
+    if (castSkill) {
+      skillEffect = this.applySkillEffect(ch, castSkill, this.currentMonster);
+      ch.castSkill(castSkill.name);
+      this.lastSkillUsed = castSkill.name;
+      this.lastSkillUsedTick = 3; // Show for 3 ticks
+    } else if (this.lastSkillUsedTick > 0) {
+      this.lastSkillUsedTick--;
+      if (this.lastSkillUsedTick <= 0) {
+        this.lastSkillUsed = null;
+      }
+    }
 
-    const result = this.combatRound(ch, monster);
+    const monster = this.currentMonster;
+    const result = this.combatRound(ch, monster, skillEffect);
 
     if (result.playerDead) {
       ch.hp = 0;
@@ -107,6 +150,7 @@ var GameEngine = {
       return;
     }
 
+    this.currentMonsterHp = result.monsterHp;
     ch.hp = result.playerHp;
     ch.mp = Math.max(0, result.playerMp);
 
@@ -115,14 +159,29 @@ var GameEngine = {
 
     this.autoPotion(ch);
 
-    const loot = this.rollLoot(monster);
-    for (const item of loot) {
-      ch.addItem(item.name, 1);
+    let loot = [];
+    if (result.monsterDead) {
+      loot = this.rollLoot(monster);
+      for (const item of loot) {
+        ch.addItem(item.name, 1);
+      }
     }
 
     ch.addSkillExp(1 + Math.floor(ch.level / 5));
 
     let msg = '';
+    if (castSkill && skillEffect) {
+      const extraDmg = skillEffect.extraDamage || 0;
+      const healAmt = skillEffect.heal || 0;
+      if (healAmt > 0) {
+        msg = `[技能] 释放 ${castSkill.name}，恢复 ${healAmt} HP`;
+      } else if (extraDmg > 0) {
+        msg = `[技能] 释放 ${castSkill.name}，额外造成 ${extraDmg} 点伤害`;
+      } else {
+        msg = `[技能] 释放 ${castSkill.name}`;
+      }
+    }
+
     if (result.monsterDead) {
       msg = `[战斗] 击败了 ${monster.name}，获得 ${result.expGained} 经验、${result.goldGained} 金币`;
       if (loot.length > 0) {
@@ -131,7 +190,7 @@ var GameEngine = {
       if (leveledUp) {
         msg += ` | 【升级！Lv.${ch.level} 获得5点待分配属性】`;
       }
-    } else {
+    } else if (!castSkill) {
       msg = `[战斗] 与 ${monster.name} 战斗中... HP:${result.playerHp}/${ch.maxHp} MP:${result.playerMp}/${ch.maxMp}`;
     }
 
@@ -149,20 +208,26 @@ var GameEngine = {
     }
   },
 
-  combatRound(ch, monster) {
+  combatRound(ch, monster, skillEffect) {
     const stats = ch.getTotalStats();
     const skillBonus = this.getSkillBonus(ch);
 
     const playerAtk = stats.attack + skillBonus.attackBonus;
     const playerMatk = stats.magicAttack + skillBonus.magicBonus;
-    const totalDamage = (playerAtk + playerMatk) * (0.9 + Math.random() * 0.2);
+    let totalDamage = (playerAtk + playerMatk) * (0.9 + Math.random() * 0.2);
     const reducedDamage = Math.max(1, Math.floor(totalDamage - monster.defense * 0.3));
+
+    // Apply skill extra damage
+    let skillExtraDamage = 0;
+    if (skillEffect && skillEffect.extraDamage) {
+      skillExtraDamage = skillEffect.extraDamage;
+    }
 
     const monsterDamage = Math.max(1, Math.floor(
       monster.attack * (0.9 + Math.random() * 0.2) - (stats.defense + stats.magicDefense) * 0.2
     ));
 
-    const newMonsterHp = monster.hp - reducedDamage;
+    const newMonsterHp = this.currentMonsterHp - reducedDamage - skillExtraDamage;
     const monsterDead = newMonsterHp <= 0;
 
     let playerHp = ch.hp - monsterDamage;
@@ -172,9 +237,15 @@ var GameEngine = {
       playerHp -= Math.floor(monsterDamage * 0.6);
     }
 
+    // Apply skill heal
+    if (skillEffect && skillEffect.heal) {
+      playerHp = Math.min(ch.maxHp, playerHp + skillEffect.heal);
+    }
+
     return {
       playerHp: Math.max(0, playerHp),
       playerMp: Math.max(0, ch.mp - Math.floor(stats.magicAttack * 0.3)),
+      monsterHp: Math.max(0, newMonsterHp),
       monsterDead,
       playerDead,
       expGained: monsterDead ? Math.floor(monster.exp * (0.9 + Math.random() * 0.2)) : 0,
@@ -205,6 +276,48 @@ var GameEngine = {
     }
 
     return { attackBonus, magicBonus };
+  },
+
+  applySkillEffect(ch, skill, monster) {
+    const def = ch.getSkillDef(skill.name);
+    if (!def) return null;
+
+    const stats = ch.getTotalStats();
+    const effect = def.effect;
+    const lv = skill.level;
+    let extraDamage = 0;
+    let heal = 0;
+
+    switch (effect.type) {
+      case 'attackPercent':
+        extraDamage = Math.floor(stats.attack * (effect.perLevel * lv) / 100 * 0.6);
+        break;
+      case 'magicPercent':
+        extraDamage = Math.floor(stats.magicAttack * (effect.perLevel * lv) / 100 * 0.6);
+        break;
+      case 'heal':
+        heal = effect.perLevel * lv * 3;
+        break;
+      case 'pet':
+        extraDamage = effect.perLevel * lv * 3;
+        break;
+      case 'dot':
+        extraDamage = effect.perLevel * lv * 2;
+        break;
+      case 'ignoreDefense':
+        extraDamage = Math.floor(monster.defense * (effect.perLevel * lv) / 100 * 2);
+        break;
+      case 'enemyDebuff':
+        extraDamage = effect.perLevel * lv * 2;
+        break;
+      case 'stun':
+        extraDamage = effect.perLevel * lv * 3;
+        break;
+      default:
+        extraDamage = effect.perLevel * lv * 1.5;
+    }
+
+    return { extraDamage, heal };
   },
 
   getCurrentMonster(dungeon) {
@@ -247,6 +360,9 @@ var GameEngine = {
       }
     }
     this.character.currentMapId = cityId;
+    this.currentMonster = null;
+    this.currentMonsterHp = 0;
+    this.lastSkillUsed = null;
     const city = this.getCurrentCity();
     this.addLog('system', `${reason}，已撤退至 ${city ? city.name : '主城'}`);
     if (this.callbacks.onUpdate) this.callbacks.onUpdate();
@@ -260,6 +376,11 @@ var GameEngine = {
     ch.currentMapId = cityId;
     ch.hp = ch.maxHp;
     ch.mp = ch.maxMp;
+    this.currentMonster = null;
+    this.currentMonsterHp = 0;
+    this.currentMonsterMaxHp = 0;
+    this.lastSkillUsed = null;
+    this.lastSkillUsedTick = 0;
     if (this.callbacks.onUpdate) this.callbacks.onUpdate();
   },
 
@@ -317,6 +438,10 @@ var GameEngine = {
       ch.removeItem(potionName, 1);
       ch.currentMapId = cityId;
       this.currentMonster = null;
+      this.currentMonsterHp = 0;
+      this.currentMonsterMaxHp = 0;
+      this.lastSkillUsed = null;
+      this.lastSkillUsedTick = 0;
       this.addLog('system', `使用回城卷，传送至 ${city ? city.name : '比奇城'}`);
       if (this.callbacks.onUpdate) this.callbacks.onUpdate();
       return { success: true };
@@ -343,6 +468,10 @@ var GameEngine = {
 
     this.character.currentMapId = cityId;
     this.currentMonster = null;
+    this.currentMonsterHp = 0;
+    this.currentMonsterMaxHp = 0;
+    this.lastSkillUsed = null;
+    this.lastSkillUsedTick = 0;
     this.addLog('system', `到达 ${city.name}（${city.region}）`);
     if (this.callbacks.onUpdate) this.callbacks.onUpdate();
     return { success: true };
@@ -361,6 +490,10 @@ var GameEngine = {
 
     this.character.currentMapId = dungeonId;
     this.currentMonster = null;
+    this.currentMonsterHp = 0;
+    this.currentMonsterMaxHp = 0;
+    this.lastSkillUsed = null;
+    this.lastSkillUsedTick = 0;
 
     if (!this.canHandleDungeon(dungeon)) {
       this.retreatToTown('战力不足以在此副本生存');

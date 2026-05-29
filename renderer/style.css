@@ -351,6 +351,85 @@ body {
   flex-shrink: 0;
 }
 
+/* ===== Battle Scene ===== */
+.battle-scene {
+  border: 1px solid #5a2010;
+  background: #0d0604;
+  padding: 8px;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.battle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.battle-label {
+  color: #e87040;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.battle-monster-name {
+  color: #ff6644;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.battle-monster-lv {
+  color: var(--text-dim);
+  font-size: 11px;
+}
+
+.battle-hp-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.battle-hp-bg {
+  flex: 1;
+  height: 14px;
+  background: #1a0804;
+  border: 1px solid #5a2010;
+}
+
+.monster-hp-fill {
+  background: linear-gradient(to bottom, #ff5533, #992200);
+  transition: width 0.3s;
+}
+
+.battle-skill-cast {
+  margin-top: 6px;
+  min-height: 20px;
+}
+
+.battle-skill-entry {
+  display: inline-block;
+  color: var(--text-yellow);
+  font-size: 12px;
+  padding: 2px 8px;
+  border: 1px solid var(--border-gold);
+  background: #1a1008;
+  margin-right: 4px;
+  margin-bottom: 2px;
+  animation: skillFlash 0.6s ease-out;
+}
+
+.battle-skill-cd {
+  color: #888;
+  font-size: 11px;
+  margin-left: 4px;
+}
+
+@keyframes skillFlash {
+  0%   { background: #5a3810; border-color: #f0c850; }
+  100% { background: #1a1008; border-color: var(--border-gold); }
+}
+
 .combat-log {
   flex: 1;
   overflow-y: auto;
@@ -589,6 +668,16 @@ body {
 .skill-name { color: var(--text-gold); }
 .skill-level { color: var(--exp-green); font-size: 11px; }
 .skill-level.locked { color: #555; }
+
+.skill-cd {
+  color: #cc8833;
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+.skill-cd.ready {
+  color: var(--exp-green);
+}
 
 .skill-row:hover .skill-tip {
   display: block;
@@ -1160,3 +1249,25 @@ body {
 ::-webkit-scrollbar-track { background: var(--bg-panel); }
 ::-webkit-scrollbar-thumb { background: #3d2810; border: 1px solid var(--border-gold); }
 ::-webkit-scrollbar-thumb:hover { background: #5a3d18; }
+
+/* Update Bar */
+.update-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: #1a3500;
+  border-bottom: 2px solid var(--exp-green);
+  color: var(--text-yellow);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.update-bar.downloading { background: #1a1a00; border-bottom-color: var(--text-yellow); }
+
+.update-bar.downloaded { background: #002a1a; border-bottom-color: #33cc33; }
+
+.update-bar.error { background: #2a0000; border-bottom-color: var(--hp-red); }
+
+.update-bar .update-progress { color: var(--text-dim); font-size: 11px; }

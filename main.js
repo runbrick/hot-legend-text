@@ -1,6 +1,7 @@
 const { app, BrowserWindow, Tray, Menu, ipcMain, nativeImage, dialog, globalShortcut } = require('electron');
 const path = require('path');
 const Store = require('electron-store');
+const { autoUpdater } = require('electron-updater');
 
 // Remove default menu bar
 Menu.setApplicationMenu(null);
@@ -225,10 +226,80 @@ ipcMain.handle('set-hotkey', (event, accelerator) => {
   return { success: false, error: '快捷键注册失败，可能已被其他应用占用' };
 });
 
+// ========== Auto Updater ==========
+autoUpdater.autoDownload = false;
+
+autoUpdater.on('checking-for-update', () => {
+  if (mainWindow) mainWindow.webContents.send('update-status', { status: 'checking' });
+});
+
+autoUpdater.on('update-available', (info) => {
+  if (mainWindow) {
+    mainWindow.webContents.send('update-status', {
+      status: 'available',
+      version: info.version,
+      releaseDate: info.releaseDate
+    });
+  }
+});
+
+autoUpdater.on('update-not-available', () => {
+  if (mainWindow) mainWindow.webContents.send('update-status', { status: 'up-to-date' });
+});
+
+autoUpdater.on('download-progress', (progress) => {
+  if (mainWindow) {
+    mainWindow.webContents.send('update-status', {
+      status: 'downloading',
+      percent: Math.floor(progress.percent)
+    });
+  }
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+  if (mainWindow) {
+    mainWindow.webContents.send('update-status', {
+      status: 'downloaded',
+      version: info.version
+    });
+  }
+});
+
+autoUpdater.on('error', (err) => {
+  console.error('Auto updater error:', err.message);
+  if (mainWindow) {
+    mainWindow.webContents.send('update-status', {
+      status: 'error',
+      message: err.message
+    });
+  }
+});
+
+ipcMain.handle('check-update', () => {
+  autoUpdater.checkForUpdates().catch(err => {
+    console.error('Check for updates failed:', err.message);
+  });
+});
+
+ipcMain.handle('download-update', () => {
+  autoUpdater.downloadUpdate().catch(err => {
+    console.error('Download update failed:', err.message);
+  });
+});
+
+ipcMain.handle('install-update', () => {
+  autoUpdater.quitAndInstall();
+});
+
 app.whenReady().then(() => {
   createWindow();
   createTray();
   registerMinimizeShortcut(store.get('hotkey', HOTKEY_DEFAULT));
+
+  // Check for updates 5 seconds after startup
+  setTimeout(() => {
+    autoUpdater.checkForUpdates().catch(() => {});
+  }, 5000);
 });
 
 app.on('window-all-closed', () => {

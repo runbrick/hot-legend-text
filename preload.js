@@ -14,5 +14,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   setHotkey: (accelerator) => ipcRenderer.invoke('set-hotkey', accelerator),
 
   // Quit notification
-  onBeforeQuit: (callback) => ipcRenderer.on('before-quit', callback)
+  onBeforeQuit: (callback) => ipcRenderer.on('before-quit', callback),
+
+  // Auto updater
+  checkUpdate: () => ipcRenderer.invoke('check-update'),
+  downloadUpdate: () => ipcRenderer.invoke('download-update'),
+  installUpdate: () => ipcRenderer.invoke('install-update'),
+  onUpdateStatus: (callback) => {
+    ipcRenderer.on('update-status', (event, data) => callback(data));
+  }
 });

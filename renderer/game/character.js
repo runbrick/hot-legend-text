@@ -32,7 +32,7 @@ class Character {
       ring1: null,
       ring2: null
     };
-    this.skills = []; // { name, level: 0-3, exp }
+    this.skills = []; // { name, level: 0-3, exp, cooldown, cooldownRemaining }
     this.inventory = []; // [{ name, quantity, type }]
     this.currentMapId = 'bichon_wild';
     this.autoPotionConfig = { hpThreshold: 0.5, mpThreshold: 0.3, enabled: true };
@@ -147,7 +147,9 @@ class Character {
           name: skillDef.name,
           level: 0,
           exp: 0,
-          maxLevel: skillDef.maxLevel
+          maxLevel: skillDef.maxLevel,
+          cooldown: 0,
+          cooldownRemaining: 0
         });
       }
     }
@@ -177,6 +179,41 @@ class Character {
 
   skillExpNeeded(currentLevel) {
     return 100 * Math.pow(2, currentLevel);
+  }
+
+  getSkillDef(skillName) {
+    const skillsData = window.gameData?.skills?.[this.className];
+    return skillsData?.find(s => s.name === skillName) || null;
+  }
+
+  getSkillCooldown(skillName) {
+    const def = this.getSkillDef(skillName);
+    if (!def) return 3;
+    return Math.min(3 + Math.floor(def.learnLevel / 8), 10);
+  }
+
+  decrementSkillCooldowns() {
+    for (const skill of this.skills) {
+      if (skill.cooldownRemaining > 0) {
+        skill.cooldownRemaining--;
+      }
+    }
+  }
+
+  getCastableSkill() {
+    const available = this.skills.filter(s => s.level > 0 && s.cooldownRemaining <= 0);
+    if (available.length === 0) return null;
+    available.sort((a, b) => b.level - a.level);
+    return available[0];
+  }
+
+  castSkill(skillName) {
+    const skill = this.skills.find(s => s.name === skillName);
+    if (!skill || skill.cooldownRemaining > 0) return false;
+    const cd = this.getSkillCooldown(skillName);
+    skill.cooldown = cd;
+    skill.cooldownRemaining = cd;
+    return true;
   }
 
   // Look up equipment data from game data
@@ -239,7 +276,7 @@ class Character {
       allocatedStats: { ...this.allocatedStats },
       pendingStatPoints: this.pendingStatPoints,
       equipment: { ...this.equipment },
-      skills: this.skills.map(s => ({ ...s })),
+      skills: this.skills.map(s => ({ name: s.name, level: s.level, exp: s.exp, maxLevel: s.maxLevel, cooldown: s.cooldown || 0, cooldownRemaining: s.cooldownRemaining || 0 })),
       inventory: this.inventory.map(i => ({ ...i })),
       currentMapId: this.currentMapId,
       autoPotionConfig: { ...this.autoPotionConfig },
@@ -263,7 +300,7 @@ class Character {
     this.allocatedStats = { ...data.allocatedStats };
     this.pendingStatPoints = data.pendingStatPoints || 0;
     this.equipment = { ...data.equipment };
-    this.skills = (data.skills || []).map(s => ({ ...s }));
+    this.skills = (data.skills || []).map(s => ({ name: s.name, level: s.level, exp: s.exp || 0, maxLevel: s.maxLevel, cooldown: s.cooldown || 0, cooldownRemaining: s.cooldownRemaining || 0 }));
     this.inventory = (data.inventory || []).map(i => ({ ...i }));
     this.currentMapId = data.currentMapId || 'bichon_wild';
     this.autoPotionConfig = data.autoPotionConfig || { hpThreshold: 0.5, mpThreshold: 0.3, enabled: true };

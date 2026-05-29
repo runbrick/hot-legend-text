@@ -307,6 +307,8 @@
     }
 
     document.getElementById('btn-start-stop').textContent = GameEngine.isRunning ? '暂停挂机' : '开始挂机';
+
+    renderBattleScene();
   }
 
   // ========== Navigation ==========
@@ -806,6 +808,37 @@
     });
   }
 
+  // ========== Battle Scene ==========
+  function renderBattleScene() {
+    const scene = document.getElementById('battle-scene');
+    const monster = GameEngine.currentMonster;
+    const inCity = GameEngine.isInCity();
+
+    if (!GameEngine.isRunning || inCity || !monster) {
+      scene.style.display = 'none';
+      return;
+    }
+
+    scene.style.display = 'block';
+
+    document.getElementById('battle-monster-name').textContent = monster.name;
+    document.getElementById('battle-monster-lv').textContent = 'Lv.' + monster.level;
+
+    const hpPct = Math.max(0, Math.floor((GameEngine.currentMonsterHp / GameEngine.currentMonsterMaxHp) * 100));
+    document.getElementById('battle-monster-hp-bar').style.width = hpPct + '%';
+    document.getElementById('battle-monster-hp-text').textContent = `${GameEngine.currentMonsterHp}/${GameEngine.currentMonsterMaxHp}`;
+
+    // Last skill used
+    const skillCastEl = document.getElementById('battle-skill-cast');
+    if (GameEngine.lastSkillUsed && GameEngine.lastSkillUsedTick > 0) {
+      const lastSkill = currentCharacter.skills.find(s => s.name === GameEngine.lastSkillUsed);
+      const cdText = lastSkill && lastSkill.cooldownRemaining > 0 ? ` (冷却${lastSkill.cooldownRemaining})` : '';
+      skillCastEl.innerHTML = `<span class="battle-skill-entry">${GameEngine.lastSkillUsed}${cdText}</span>`;
+    } else {
+      skillCastEl.innerHTML = '';
+    }
+  }
+
   // ========== Skills ==========
   function renderSkills() {
     const el = document.getElementById('skills-display');
@@ -819,8 +852,16 @@
     for (const skill of ch.skills) {
       const expNeeded = ch.skillExpNeeded(skill.level);
       const maxed = skill.level >= skill.maxLevel;
+      let cdHtml = '';
+      if (skill.level > 0) {
+        if (skill.cooldownRemaining > 0) {
+          cdHtml = `<span class="skill-cd">CD:${skill.cooldownRemaining}</span>`;
+        } else {
+          cdHtml = `<span class="skill-cd ready">就绪</span>`;
+        }
+      }
       html += `<div class="skill-row">
-        <span class="skill-name">${skill.name}</span>
+        <span class="skill-name">${skill.name}${cdHtml}</span>
         <span class="skill-level">
           ${maxed ? `Lv.${skill.level} 满级` : `Lv.${skill.level} (${skill.exp}/${expNeeded})`}
         </span>
@@ -1408,6 +1449,55 @@
       if (currentCharacter) {
         GameEngine.stop();
         autoSave();
+      }
+    });
+  }
+
+  // ========== Auto Updater ==========
+  if (window.electronAPI) {
+    window.electronAPI.onUpdateStatus((data) => {
+      const bar = document.getElementById('update-bar');
+      const text = document.getElementById('update-bar-text');
+      const btn = document.getElementById('update-bar-btn');
+      if (!bar || !text || !btn) return;
+
+      bar.style.display = 'flex';
+      bar.className = 'update-bar';
+
+      switch (data.status) {
+        case 'checking':
+          text.textContent = '正在检查更新...';
+          btn.style.display = 'none';
+          break;
+        case 'available':
+          text.textContent = `发现新版本 v${data.version}，是否下载更新？`;
+          btn.style.display = '';
+          btn.textContent = '下载更新';
+          btn.onclick = () => { window.electronAPI.downloadUpdate(); };
+          break;
+        case 'downloading':
+          bar.classList.add('downloading');
+          text.textContent = `正在下载更新... ${data.percent}%`;
+          btn.style.display = 'none';
+          break;
+        case 'downloaded':
+          bar.classList.add('downloaded');
+          text.textContent = `更新已下载完成 (v${data.version})，重启后生效`;
+          btn.style.display = '';
+          btn.textContent = '立即重启';
+          btn.onclick = () => { window.electronAPI.installUpdate(); };
+          break;
+        case 'up-to-date':
+          text.textContent = '已是最新版本';
+          bar.style.display = 'none';
+          break;
+        case 'error':
+          bar.classList.add('error');
+          text.textContent = `更新检查失败: ${data.message}`;
+          btn.style.display = 'none';
+          // Hide after 5 seconds
+          setTimeout(() => { bar.style.display = 'none'; }, 5000);
+          break;
       }
     });
   }

@@ -2,11 +2,12 @@
   "name": "hot-legend-text",
   "version": "1.0.0",
   "description": "热血传奇全文字放置游戏 - Progress Quest风格增量游戏",
+  "repository": "https://github.com/runbrick/hot-legend-text",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder --win portable",
-    "build:installer": "electron-builder --win"
+    "build": "electron-builder --win",
+    "dist": "electron-builder --win --publish always"
   },
   "author": "zhouwei",
   "license": "MIT",
@@ -15,7 +16,8 @@
     "electron-builder": "^25.0.0"
   },
   "dependencies": {
-    "electron-store": "^8.2.0"
+    "electron-store": "^8.2.0",
+    "electron-updater": "^6.8.3"
   },
   "build": {
     "appId": "com.hotlegend.idle",
@@ -26,11 +28,22 @@
     "win": {
       "target": [
         {
-          "target": "portable",
-          "arch": ["x64"]
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": null
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "runbrick",
+      "repo": "hot-legend-text"
     },
     "files": [
       "main.js",

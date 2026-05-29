@@ -25,6 +25,12 @@
       <span id="game-status" class="game-status">● 挂机中</span>
     </div>
 
+    <!-- Update Notification Bar -->
+    <div id="update-bar" class="update-bar" style="display:none;">
+      <span id="update-bar-text"></span>
+      <button id="update-bar-btn" class="btn btn-small">下载更新</button>
+    </div>
+
     <!-- Main Layout -->
     <div class="main-layout">
       <!-- Left Panel: Character Info + Equipment -->
@@ -68,7 +74,22 @@
 
       <!-- Center Panel: Combat Log -->
       <div class="center-panel">
-        <div class="panel-title">战斗日志</div>
+        <div class="panel-title">战斗场景</div>
+        <div id="battle-scene" class="battle-scene" style="display:none;">
+          <div class="battle-row">
+            <span class="battle-label">目标</span>
+            <span id="battle-monster-name" class="battle-monster-name"></span>
+            <span id="battle-monster-lv" class="battle-monster-lv"></span>
+          </div>
+          <div class="battle-hp-row">
+            <div class="bar-bg battle-hp-bg">
+              <div id="battle-monster-hp-bar" class="bar-fill monster-hp-fill"></div>
+            </div>
+            <span id="battle-monster-hp-text" class="bar-text"></span>
+          </div>
+          <div id="battle-skill-cast" class="battle-skill-cast"></div>
+        </div>
+        <div class="panel-title" style="margin-top:4px;">战斗日志</div>
         <div id="combat-log" class="combat-log"></div>
       </div>
 
